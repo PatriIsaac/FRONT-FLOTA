@@ -3,6 +3,14 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { NAV_SECTIONS } from '../data/navigation';
 import { useAuth } from '../hooks/useAuth';
 
+// ponytail: backend sends role slugs ('admin', 'analista_costos'); allowedRoles use display names. Map here. Add a row per new role.
+const ROLE_MAP: Record<string, string> = {
+  admin: 'Administrador',
+  administrador: 'Administrador',
+  analista_costos: 'Analista de Costos',
+  encargado_garaje: 'Encargado de Garaje',
+};
+
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
@@ -74,7 +82,8 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
         {/* Sections */}
         {NAV_SECTIONS.map(section => {
-          const userRole = user?.role || user?.rol;
+          const rawRole = user?.role || user?.rol;
+          const userRole = rawRole ? (ROLE_MAP[rawRole.toLowerCase()] ?? rawRole) : rawRole;
           if (section.allowedRoles && userRole && !section.allowedRoles.includes(userRole)) {
             return null;
           }
