@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { NAV_SECTIONS } from '../data/navigation';
 import { useAuth } from '../hooks/useAuth';
+import { indicadorService } from '../services/indicador.service';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { DataTable } from '../components/ui/DataTable';
@@ -8,18 +10,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line
 } from 'recharts';
-import { Truck, Users, MapPin, Wrench, TrendingUp, TrendingDown } from 'lucide-react';
-
-const stats = [
-  { label: 'Vehículos activos', value: '48', icon: Truck, change: '+2', up: true,
-    iconBg: 'rgba(14,165,233,0.12)', iconColor: '#0ea5e9' },
-  { label: 'Conductores', value: '62', icon: Users, change: '0', up: true,
-    iconBg: 'rgba(139,92,246,0.12)', iconColor: '#8b5cf6' },
-  { label: 'Km este mes', value: '18,430', icon: MapPin, change: '+12%', up: true,
-    iconBg: 'rgba(16,185,129,0.12)', iconColor: '#10b981' },
-  { label: 'Órdenes activas', value: '7', icon: Wrench, change: '-3', up: false,
-    iconBg: 'rgba(245,158,11,0.12)', iconColor: '#f59e0b' },
-];
+import { Truck, CheckCircle, Gauge, Fuel } from 'lucide-react';
 
 const chartData = [
   { name: 'Ene', combustible: 4000, mantenimiento: 2400 },
@@ -55,6 +46,26 @@ export default function Dashboard() {
   const { user } = useAuth();
   const now = new Date();
   const dateStr = now.toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  const { data: dash } = useQuery({
+    queryKey: ['indicadoresDashboard'],
+    queryFn: indicadorService.getDashboard
+  });
+
+  const stats = [
+    { label: 'Vehículos totales', value: dash ? String(dash.totalVehiculos) : '—', icon: Truck,
+      sub: `${dash?.vehiculosConCosto ?? 0} con costo calculado`,
+      iconBg: 'rgba(14,165,233,0.12)', iconColor: '#0ea5e9' },
+    { label: 'Disponibles', value: dash ? String(dash.disponibles) : '—', icon: CheckCircle,
+      sub: dash ? `${(dash.disponibilidadPct * 100).toFixed(0)}% disponibilidad` : '',
+      iconBg: 'rgba(16,185,129,0.12)', iconColor: '#10b981' },
+    { label: 'CKV promedio', value: dash ? `$${dash.promedios.ckv.toFixed(2)}` : '—', icon: Gauge,
+      sub: 'costo por km (US$/km)',
+      iconBg: 'rgba(239,68,68,0.12)', iconColor: '#ef4444' },
+    { label: 'Consumo promedio', value: dash ? `${dash.promedios.consumo.toFixed(1)}` : '—', icon: Fuel,
+      sub: 'km/galón',
+      iconBg: 'rgba(245,158,11,0.12)', iconColor: '#f59e0b' },
+  ];
 
   const columns = [
     { key: 'evento',  header: 'Evento' },
@@ -98,9 +109,8 @@ export default function Dashboard() {
             <div className="dash-stat__body">
               <p className="dash-stat__label">{s.label}</p>
               <h3 className="dash-stat__value">{s.value}</h3>
-              <span className={`dash-stat__change ${s.up ? 'dash-stat__change--up' : 'dash-stat__change--down'}`}>
-                {s.up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                {s.change} este mes
+              <span className="dash-stat__change dash-stat__change--up">
+                {s.sub}
               </span>
             </div>
           </div>

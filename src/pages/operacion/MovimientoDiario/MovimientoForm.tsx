@@ -18,6 +18,9 @@ const movimientoSchema = z.object({
   kmLlegada: z.coerce.number().min(0, 'Requerido'),
   horas: z.coerce.number().min(0, 'Requerido'),
   destino: z.string().min(1, 'Destino requerido'),
+}).refine((d) => d.kmLlegada >= d.kmSalida, {
+  message: 'Km Llegada no puede ser menor que Km Salida',
+  path: ['kmLlegada'],
 });
 
 type MovimientoFormData = z.infer<typeof movimientoSchema>;
@@ -67,8 +70,8 @@ export default function MovimientoForm({ isOpen, onClose, movimiento }: Props) {
       alerts.success(movimiento ? 'Movimiento actualizado' : 'Movimiento registrado');
       onClose();
     },
-    onError: () => {
-      alerts.error('Error al guardar el movimiento');
+    onError: (err: any) => {
+      alerts.error(err?.response?.data?.error ?? 'Error al guardar el movimiento');
     }
   });
 

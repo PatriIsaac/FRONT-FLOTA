@@ -36,4 +36,21 @@ export const costosService = {
     const { data } = await api.post('/costos/promedio-anual', payload);
     return data;
   },
+
+  // Lógica de negocio (motor de cálculo)
+  calcular: async (vehiculoId: number, mesAnio: string) => {
+    const { data } = await api.post('/costos/calcular', { vehiculoId, mesAnio });
+    return data;
+  },
+  getHistoricoOperacion: async (vehiculoId: number) => {
+    const { data } = await api.get(`/costos/operacion/${vehiculoId}`);
+    return data;
+  },
+  getSustitucion: async (
+    vehiculoId: number,
+    params?: { factorCrecimiento?: number; mantenimientoAnioBase?: number }
+  ) => {
+    const { data } = await api.get(`/costos/sustitucion/${vehiculoId}`, { params });
+    return data;
+  },
 };

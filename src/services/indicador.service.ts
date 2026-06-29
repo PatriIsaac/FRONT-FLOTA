@@ -11,5 +11,9 @@ export const indicadorService = {
   },
   delete: async (id: number) => {
     await api.delete(`/indicadores/${id}`);
+  },
+  getDashboard: async () => {
+    const { data } = await api.get('/indicadores/dashboard');
+    return data;
   }
 };

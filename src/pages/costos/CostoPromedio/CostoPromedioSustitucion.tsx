@@ -3,7 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Calculator, Save, AlertTriangle } from 'lucide-react';
+import { Calculator, Save, AlertTriangle, TrendingDown } from 'lucide-react';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceDot
+} from 'recharts';
 import { costosService } from '../../../services/costos.service';
 import { vehiculoService } from '../../../services/vehiculo.service';
 import { Card, CardContent } from '../../../components/ui/Card';
@@ -30,6 +33,15 @@ export default function CostoPromedioSustitucion() {
     queryKey: ['vehiculos'],
     queryFn: vehiculoService.getAll
   });
+
+  // Análisis de sustitución óptima (motor del backend, Figura 11)
+  const [analisisVehiculoId, setAnalisisVehiculoId] = useState<number>(0);
+  const { data: analisis, isFetching: analizando } = useQuery({
+    queryKey: ['sustitucion', analisisVehiculoId],
+    queryFn: () => costosService.getSustitucion(analisisVehiculoId),
+    enabled: analisisVehiculoId > 0,
+  });
+  const puntoOptimo = analisis?.curva?.find((c: any) => c.anio === analisis.anioOptimo);
 
   const { data: costosPromedio = [], isLoading } = useQuery({
     queryKey: ['costosPromedioAnual'],
@@ -98,6 +110,55 @@ export default function CostoPromedioSustitucion() {
           <Calculator className="h-6 w-6 text-amber-600" />
         </div>
       </div>
+
+      {/* Análisis de sustitución óptima (curva Cpa por año, motor del backend) */}
+      <Card>
+        <CardContent className="p-6 space-y-4">
+          <div className="flex items-end gap-4 max-w-md">
+            <div className="flex-1">
+              <Select
+                label="Analizar edad óptima de sustitución (Figura 11)"
+                value={analisisVehiculoId}
+                onChange={(e) => setAnalisisVehiculoId(Number(e.target.value))}
+                options={[
+                  { value: 0, label: 'Seleccione vehículo...' },
+                  ...vehiculos.map((v: any) => ({ value: v.vehiculoId, label: `${v.placa} - ${v.codigoPatrimonio}` }))
+                ]}
+              />
+            </div>
+          </div>
+
+          {analizando && <p className="text-sm text-gray-500">Calculando curva...</p>}
+
+          {analisis && (
+            <>
+              <div className="flex flex-wrap gap-6 text-sm">
+                <div className="flex items-center gap-2 text-red-600 font-bold">
+                  <TrendingDown className="w-4 h-4" /> Año óptimo de sustitución: {analisis.anioOptimo}
+                </div>
+                <div className="text-gray-600">Depreciación anual: S/. {analisis.depreciacionAnual}</div>
+                <div className="text-gray-600">Mant. año base: S/. {analisis.mantenimientoAnioBase}</div>
+                <div className="text-gray-600">Factor crecimiento: {analisis.factorCrecimiento}</div>
+              </div>
+
+              <div style={{ height: 300 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={analisis.curva}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="anio" label={{ value: 'Año de vida útil', position: 'insideBottom', offset: -2, fontSize: 12 }} tick={{ fontSize: 12 }} />
+                    <YAxis tick={{ fontSize: 12 }} />
+                    <Tooltip formatter={(v: any) => `S/. ${Number(v).toFixed(2)}`} />
+                    <Line type="monotone" dataKey="costoPromedioAnual" stroke="#d97706" strokeWidth={2.5} name="Cpa (S/.)" dot={{ r: 3 }} />
+                    {puntoOptimo && (
+                      <ReferenceDot x={puntoOptimo.anio} y={puntoOptimo.costoPromedioAnual} r={6} fill="#ef4444" stroke="white" />
+                    )}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1">
