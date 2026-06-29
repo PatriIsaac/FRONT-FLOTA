@@ -13,6 +13,7 @@ export interface NavSection {
   label: string;
   icon: string;
   color: string;
+  allowedRoles?: string[];
   items: NavItem[];
 }
 
@@ -22,16 +23,17 @@ export const NAV_SECTIONS: NavSection[] = [
     label: 'Seguridad',
     icon: '🔐',
     color: '#6366f1',
+    allowedRoles: ['Administrador'],
     items: [
       {
         id: 'mant-usuarios',
-        label: 'Mant. Usuarios',
+        label: 'Usuarios',
         path: '/seguridad/usuarios',
         description: 'Registro, modificación y desactivación de usuarios del sistema',
       },
       {
         id: 'mant-roles',
-        label: 'Mant. Roles',
+        label: 'Roles',
         path: '/seguridad/roles',
         description: 'Asociación de permisos por rol (RBAC); analista de costos, jefe de mantenimiento, encargado de garaje, conductor, gerencia, administrador',
       },
@@ -42,34 +44,35 @@ export const NAV_SECTIONS: NavSection[] = [
     label: 'Configuración',
     icon: '⚙️',
     color: '#8b5cf6',
+    allowedRoles: ['Administrador', 'Gerencia'],
     items: [
       {
         id: 'mant-vehiculos',
-        label: 'Mant. Vehículos',
+        label: 'Vehículos',
         path: '/configuracion/vehiculos',
         description: 'Registro y codificación patrimonial de seis dígitos de las unidades de la flota',
       },
       {
         id: 'mant-conductores',
-        label: 'Mant. Conductores',
+        label: 'Conductores',
         path: '/configuracion/conductores',
         description: 'Registro de conductores y asignación vigente a vehículos',
       },
       {
         id: 'mant-areas',
-        label: 'Mant. Áreas',
+        label: 'Áreas',
         path: '/configuracion/areas',
         description: 'Registro de áreas/dependencias para la asignación de vehículos',
       },
       {
         id: 'mant-talleres',
-        label: 'Mant. Talleres',
+        label: 'Talleres',
         path: '/configuracion/talleres',
         description: 'Registro de talleres propios y de terceros autorizados',
       },
       {
         id: 'mant-servicentros',
-        label: 'Mant. Servicentros',
+        label: 'Servicentros',
         path: '/configuracion/servicentros',
         description: 'Registro de servicentros acreditados para el abastecimiento de combustible',
       },
@@ -86,6 +89,7 @@ export const NAV_SECTIONS: NavSection[] = [
     label: 'Operación de Flota',
     icon: '🚛',
     color: '#0ea5e9',
+    allowedRoles: ['Administrador', 'Gerencia', 'Analista de Costos', 'Encargado de Garaje', 'Conductor'],
     items: [
       {
         id: 'movimiento-diario',
@@ -125,6 +129,7 @@ export const NAV_SECTIONS: NavSection[] = [
     label: 'Abastecimiento',
     icon: '⛽',
     color: '#f59e0b',
+    allowedRoles: ['Administrador', 'Gerencia', 'Encargado de Garaje'],
     items: [
       {
         id: 'emitir-orden-abastecimiento',
@@ -158,6 +163,7 @@ export const NAV_SECTIONS: NavSection[] = [
     label: 'Mantenimiento',
     icon: '🔧',
     color: '#10b981',
+    allowedRoles: ['Administrador', 'Gerencia', 'Jefe de Mantenimiento'],
     items: [
       {
         id: 'programar-preventivo',
@@ -206,6 +212,7 @@ export const NAV_SECTIONS: NavSection[] = [
     label: 'Costos e Indicadores',
     icon: '📊',
     color: '#ef4444',
+    allowedRoles: ['Administrador', 'Gerencia', 'Analista de Costos'],
     items: [
       {
         id: 'calcular-costo-variable',
@@ -251,6 +258,7 @@ export const NAV_SECTIONS: NavSection[] = [
     label: 'Administrativa (apoyo)',
     icon: '📋',
     color: '#64748b',
+    allowedRoles: ['Administrador', 'Gerencia'],
     items: [
       {
         id: 'solicitud-materiales',
@@ -278,6 +286,7 @@ export const NAV_SECTIONS: NavSection[] = [
     label: 'Inventario y Componentes (apoyo)',
     icon: '📦',
     color: '#06b6d4',
+    allowedRoles: ['Administrador', 'Jefe de Mantenimiento'],
     items: [
       {
         id: 'inventario-fisico',

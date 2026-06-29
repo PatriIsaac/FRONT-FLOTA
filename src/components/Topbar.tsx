@@ -1,8 +1,18 @@
-import { useLocation } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { LogOut, Bell, Settings, User as UserIcon, Sun, Moon } from 'lucide-react';
 import { NAV_SECTIONS } from '../data/navigation';
+import { useAuth } from '../hooks/useAuth';
+import { useTheme } from '../context/ThemeContext';
+import { alerts } from '../utils/alerts';
 
 export default function Topbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Build breadcrumb from current path
   const buildBreadcrumb = () => {
@@ -24,6 +34,24 @@ export default function Topbar() {
 
   const crumbs = buildBreadcrumb();
 
+  const handleLogout = async () => {
+    const confirmed = await alerts.confirm('Cerrar Sesión', '¿Estás seguro de que deseas salir del sistema?');
+    if (confirmed) {
+      logout();
+      navigate('/login');
+    }
+  };
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <header className="topbar">
       {/* Breadcrumb */}
@@ -41,31 +69,70 @@ export default function Topbar() {
       </div>
 
       {/* Actions */}
-      <div className="topbar-actions">
+      <div className="topbar-actions" ref={dropdownRef}>
         {/* Notifications */}
-        <button className="topbar-icon-btn" title="Notificaciones">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
+        <button className="topbar-icon-btn" title="Notificaciones" id="topbar-notifications-btn">
+          <Bell size={16} />
         </button>
 
         {/* Settings */}
-        <button className="topbar-icon-btn" title="Configuración">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M20 12h1.5M2.5 12H4M19.07 19.07l-1.41-1.41M5.34 5.34L3.93 3.93M12 20v1.5M12 2.5V4"/>
-          </svg>
+        <button className="topbar-icon-btn" title="Configuración" id="topbar-settings-btn">
+          <Settings size={16} />
         </button>
 
-        {/* User info */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingLeft: '8px', borderLeft: '1px solid var(--border-color)' }}>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Administrador</div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>admin@safv.gob</div>
+        {/* Theme toggle */}
+        <button
+          id="topbar-theme-btn"
+          className="topbar-icon-btn"
+          onClick={toggleTheme}
+          title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+          aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+        >
+          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+        </button>
+
+        {/* User section */}
+        <div
+          className="topbar-user"
+          onClick={() => setShowDropdown(!showDropdown)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && setShowDropdown(!showDropdown)}
+        >
+          <div className="topbar-user-info">
+            <div className="topbar-user-name">{user?.name || user?.nombre || 'Usuario'}</div>
+            <div className="topbar-user-role">
+              {(() => {
+                const r = user?.role || user?.rol;
+                return r === 'admin' ? 'Administrador' : (r || 'Invitado');
+              })()}
+            </div>
           </div>
-          <div className="topbar-avatar">AD</div>
+          <div className="topbar-avatar">
+            {(user?.name || user?.nombre)?.charAt(0).toUpperCase() || 'U'}
+          </div>
         </div>
+
+        {/* Dropdown */}
+        {showDropdown && (
+          <div className="topbar-dropdown">
+            <button
+              className="topbar-dropdown-item"
+              onClick={() => { setShowDropdown(false); navigate('/perfil'); }}
+            >
+              <UserIcon size={15} />
+              Mi Perfil
+            </button>
+            <div className="topbar-dropdown-sep" />
+            <button
+              className="topbar-dropdown-item topbar-dropdown-item--danger"
+              onClick={handleLogout}
+            >
+              <LogOut size={15} />
+              Cerrar Sesión
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );

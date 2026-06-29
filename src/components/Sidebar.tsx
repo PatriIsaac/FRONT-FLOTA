@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { NAV_SECTIONS } from '../data/navigation';
+import { useAuth } from '../hooks/useAuth';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -8,6 +9,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
+  const { user } = useAuth();
   const location = useLocation();
   const [openSections, setOpenSections] = useState<Set<string>>(
     () => {
@@ -72,6 +74,11 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
         {/* Sections */}
         {NAV_SECTIONS.map(section => {
+          const userRole = user?.role || user?.rol;
+          if (section.allowedRoles && userRole && !section.allowedRoles.includes(userRole)) {
+            return null;
+          }
+          
           const isOpen = openSections.has(section.id);
           const isSectionActive = section.items.some(i => isItemActive(i.path));
 

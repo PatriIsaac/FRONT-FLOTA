@@ -1,8 +1,45 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import Dashboard from '../pages/Dashboard';
 import GenericPage from '../pages/GenericPage';
+import Login from '../pages/auth/Login';
 
+import PrivateRoute from './PrivateRoute';
+import VehiculosList from '../pages/configuracion/Vehiculos/VehiculosList';
+import ConductoresList from '../pages/configuracion/Conductores/ConductoresList';
+import MovimientoList from '../pages/operacion/MovimientoDiario/MovimientoList';
+import OrdenesList from '../pages/mantenimiento/OrdenesList';
+import AbastecimientoList from '../pages/abastecimiento/AbastecimientoList';
+import UsuariosList from '../pages/seguridad/Usuarios/UsuariosList';
+import RolesList from '../pages/seguridad/Roles/RolesList';
+import AreasList from '../pages/configuracion/Areas/AreasList';
+import TalleresList from '../pages/configuracion/Talleres/TalleresList';
+import ServicentrosList from '../pages/configuracion/Servicentros/ServicentrosList';
+import ParametrosCostosList from '../pages/configuracion/ParametrosCostos/ParametrosCostosList';
+import AsignacionList from '../pages/operacion/Asignacion/AsignacionList';
+import DisponibilidadList from '../pages/operacion/Disponibilidad/DisponibilidadList';
+import CalcularIUV from '../pages/operacion/Indicadores/CalcularIUV';
+import TotalizarKmHoras from '../pages/operacion/Indicadores/TotalizarKmHoras';
+import EmitirOrden from '../pages/abastecimiento/OrdenAbastecimiento/EmitirOrden';
+import CalcularRendimiento from '../pages/abastecimiento/Indicadores/CalcularRendimiento';
+import TotalizarConsumo from '../pages/abastecimiento/Indicadores/TotalizarConsumo';
+import ProgramacionPreventivo from '../pages/mantenimiento/Programacion/ProgramacionPreventivo';
+import AutorizacionServicio from '../pages/mantenimiento/ServicioExterno/AutorizacionServicio';
+import RegistroManoObraRepuestos from '../pages/mantenimiento/RegistroTrabajos/RegistroManoObraRepuestos';
+import RegistroCostoMensual from '../pages/mantenimiento/Costos/RegistroCostoMensual';
+import HistorialTecnico from '../pages/mantenimiento/Historial/HistorialTecnico';
+import CostoVariable from '../pages/costos/CostoVariable/CostoVariable';
+import DepreciacionOperacional from '../pages/costos/Depreciacion/DepreciacionOperacional';
+import CostoPromedioSustitucion from '../pages/costos/CostoPromedio/CostoPromedioSustitucion';
+import GeneradorIndicadores from '../pages/costos/Indicadores/GeneradorIndicadores';
+import ImportarCostosFijos from '../pages/costos/CostoFijo/ImportarCostosFijos';
+import ReporteGestion from '../pages/costos/Reportes/ReporteGestion';
+import SolicitudMateriales from '../pages/administrativa/SolicitudMateriales/SolicitudMateriales';
+import ControlMateriales from '../pages/administrativa/ControlMateriales/ControlMateriales';
+import DocumentacionPersonal from '../pages/administrativa/DocumentacionPersonal/DocumentacionPersonal';
+import InventarioFisico from '../pages/inventario/InventarioFisico/InventarioFisico';
+import FichaLlantaConjunto from '../pages/inventario/FichaLlanta/FichaLlantaConjunto';
+import EstadoComponentes from '../pages/inventario/EstadoComponentes/EstadoComponentes';
 // Helper to create a generic route element
 const page = (
   title: string,
@@ -24,305 +61,175 @@ const page = (
 
 export const router = createBrowserRouter([
   {
+    path: '/login',
+    element: <Login />,
+  },
+  {
     path: '/',
-    element: <MainLayout />,
+    element: <PrivateRoute />,
     children: [
-      { index: true, element: <Dashboard /> },
+      {
+        path: '/',
+        element: <MainLayout />,
+        children: [
+          { index: true, element: <Dashboard /> },
 
       // ── Seguridad ──────────────────────────────────────────────────────────
       {
         path: 'seguridad/usuarios',
-        element: page(
-          'Mant. Usuarios',
-          'Registro, modificación y desactivación de usuarios del sistema.',
-          'Seguridad', '#6366f1', '🔐'
-        ),
+        element: <UsuariosList />,
       },
       {
         path: 'seguridad/roles',
-        element: page(
-          'Mant. Roles',
-          'Asociación de permisos por rol (RBAC): analista de costos, jefe de mantenimiento, encargado de garaje, conductor, gerencia, administrador.',
-          'Seguridad', '#6366f1', '🔐'
-        ),
+        element: <RolesList />,
       },
 
       // ── Configuración ──────────────────────────────────────────────────────
       {
         path: 'configuracion/vehiculos',
-        element: page(
-          'Mant. Vehículos',
-          'Registro y codificación patrimonial de seis dígitos de las unidades de la flota.',
-          'Configuración', '#8b5cf6', '⚙️'
-        ),
+        element: <VehiculosList />,
       },
       {
         path: 'configuracion/conductores',
-        element: page(
-          'Mant. Conductores',
-          'Registro de conductores y asignación vigente a vehículos.',
-          'Configuración', '#8b5cf6', '⚙️'
-        ),
+        element: <ConductoresList />,
       },
       {
         path: 'configuracion/areas',
-        element: page(
-          'Mant. Áreas',
-          'Registro de áreas/dependencias para la asignación de vehículos.',
-          'Configuración', '#8b5cf6', '⚙️'
-        ),
+        element: <AreasList />,
       },
       {
         path: 'configuracion/talleres',
-        element: page(
-          'Mant. Talleres',
-          'Registro de talleres propios y de terceros autorizados.',
-          'Configuración', '#8b5cf6', '⚙️'
-        ),
+        element: <TalleresList />,
       },
       {
         path: 'configuracion/servicentros',
-        element: page(
-          'Mant. Servicentros',
-          'Registro de servicentros acreditados para el abastecimiento de combustible.',
-          'Configuración', '#8b5cf6', '⚙️'
-        ),
+        element: <ServicentrosList />,
       },
       {
         path: 'configuracion/parametros-costos',
-        element: page(
-          'Parámetros de costos (CFP/CFV)',
-          'Ingreso manual o importación por archivo (CSV) del costo fijo provisto por Contabilidad de Costos.',
-          'Configuración', '#8b5cf6', '⚙️'
-        ),
+        element: <ParametrosCostosList />,
       },
 
       // ── Operación de Flota ─────────────────────────────────────────────────
       {
         path: 'operacion/movimiento-diario',
-        element: page(
-          'Registrar movimiento diario',
-          'Registro de salida, recorrido y llegada del vehículo; actualización del kilometraje acumulado.',
-          'Operación de Flota', '#0ea5e9', '🚛', 'MA 122 01 01'
-        ),
+        element: <MovimientoList />,
       },
       {
         path: 'operacion/asignar-vehiculo',
-        element: page(
-          'Asignar vehículo a área',
-          'Asignación de unidades disponibles a las áreas solicitantes.',
-          'Operación de Flota', '#0ea5e9', '🚛'
-        ),
+        element: <AsignacionList />,
       },
       {
         path: 'operacion/disponibilidad',
-        element: page(
-          'Consultar disponibilidad',
-          'Consulta del estado y disponibilidad operativa de cada unidad.',
-          'Operación de Flota', '#0ea5e9', '🚛'
-        ),
+        element: <DisponibilidadList />,
       },
       {
         path: 'operacion/calcular-iuv',
-        element: page(
-          'Calcular IUV',
-          'Cálculo del índice de utilización del vehículo (Ec. 10).',
-          'Operación de Flota', '#0ea5e9', '🚛'
-        ),
+        element: <CalcularIUV />,
       },
       {
         path: 'operacion/totalizar-km',
-        element: page(
-          'Totalizar km y horas mensuales',
-          'Consolidación mensual de kilometraje y horas de uso para el cálculo de costos.',
-          'Operación de Flota', '#0ea5e9', '🚛'
-        ),
+        element: <TotalizarKmHoras />,
       },
 
       // ── Abastecimiento ─────────────────────────────────────────────────────
       {
         path: 'abastecimiento/emitir-orden',
-        element: page(
-          'Emitir orden de abastecimiento',
-          'Autorización previa emitida por el encargado de garaje antes del abastecimiento.',
-          'Abastecimiento', '#f59e0b', '⛽', 'MA 122 01 02'
-        ),
+        element: <EmitirOrden />,
       },
       {
         path: 'abastecimiento/registrar',
-        element: page(
-          'Registrar abastecimiento',
-          'Registro de combustible/lubricante, galones y kilometraje del vehículo.',
-          'Abastecimiento', '#f59e0b', '⛽'
-        ),
+        element: <AbastecimientoList />,
       },
       {
         path: 'abastecimiento/calcular-rendimiento',
-        element: page(
-          'Calcular rendimiento (km/galón)',
-          'Cálculo del rendimiento de combustible por unidad.',
-          'Abastecimiento', '#f59e0b', '⛽'
-        ),
+        element: <CalcularRendimiento />,
       },
       {
         path: 'abastecimiento/totalizar-consumo',
-        element: page(
-          'Totalizar consumo mensual',
-          'Consolidación mensual de galones consumidos y costo de combustible.',
-          'Abastecimiento', '#f59e0b', '⛽'
-        ),
+        element: <TotalizarConsumo />,
       },
 
       // ── Mantenimiento ──────────────────────────────────────────────────────
       {
         path: 'mantenimiento/programar-preventivo',
-        element: page(
-          'Programar mantenimiento preventivo',
-          'Programación por kilometraje a partir del movimiento acumulado de la unidad.',
-          'Mantenimiento', '#10b981', '🔧'
-        ),
+        element: <ProgramacionPreventivo />,
       },
       {
         path: 'mantenimiento/orden-servicio',
-        element: page(
-          'Registrar orden de servicio',
-          'Emisión de orden de servicio para mantenimiento en taller propio.',
-          'Mantenimiento', '#10b981', '🔧', 'MA 122 02 01'
-        ),
+        element: <OrdenesList />,
       },
       {
         path: 'mantenimiento/servicio-externo',
-        element: page(
-          'Autorizar servicio externo',
-          'Autorización de servicio para mantenimiento en taller de terceros.',
-          'Mantenimiento', '#10b981', '🔧', 'MA 122 02 02'
-        ),
+        element: <AutorizacionServicio />,
       },
       {
         path: 'mantenimiento/mano-obra-repuestos',
-        element: page(
-          'Registrar mano de obra y repuestos',
-          'Registro de insumos, repuestos y horas de mano de obra utilizadas.',
-          'Mantenimiento', '#10b981', '🔧', 'MA 122 02 04'
-        ),
+        element: <RegistroManoObraRepuestos />,
       },
       {
         path: 'mantenimiento/costo-mensual',
-        element: page(
-          'Registrar costo mensual',
-          'Consolidación de los costos de mantenimiento del periodo.',
-          'Mantenimiento', '#10b981', '🔧', 'MA 122 02 03'
-        ),
+        element: <RegistroCostoMensual />,
       },
       {
         path: 'mantenimiento/historial-tecnico',
-        element: page(
-          'Consultar historial técnico',
-          'Consulta del historial de intervenciones preventivas y correctivas por vehículo.',
-          'Mantenimiento', '#10b981', '🔧'
-        ),
+        element: <HistorialTecnico />,
       },
 
       // ── Costos e Indicadores ───────────────────────────────────────────────
       {
         path: 'costos/costo-variable',
-        element: page(
-          'Calcular costo variable y CKV',
-          'Cálculo del costo variable del vehículo (CVV) y el costo por kilómetro (CKV) — Ec. 1.',
-          'Costos e Indicadores', '#ef4444', '📊'
-        ),
+        element: <CostoVariable />,
       },
       {
         path: 'costos/depreciacion',
-        element: page(
-          'Calcular depreciación lineal operacional',
-          'Cálculo de la depreciación mensual operacional del vehículo — Ec. 2.',
-          'Costos e Indicadores', '#ef4444', '📊'
-        ),
+        element: <DepreciacionOperacional />,
       },
       {
         path: 'costos/costo-promedio',
-        element: page(
-          'Calcular costo promedio anual y sustitución óptima',
-          'Cálculo del costo promedio anual (Cpa) y evaluación de la edad óptima de sustitución — Ec. 11.',
-          'Costos e Indicadores', '#ef4444', '📊'
-        ),
+        element: <CostoPromedioSustitucion />,
       },
       {
         path: 'costos/indicadores',
-        element: page(
-          'Generar indicadores (VA / IA)',
-          'Generación de indicadores de consumo, mantenimiento en terceros e índice de utilización.',
-          'Costos e Indicadores', '#ef4444', '📊'
-        ),
+        element: <GeneradorIndicadores />,
       },
       {
         path: 'costos/importar-cfp',
-        element: page(
-          'Ingresar / importar CFP y CFV',
-          'Carga manual o por archivo CSV del costo fijo provisto por Contabilidad de Costos.',
-          'Costos e Indicadores', '#ef4444', '📊'
-        ),
+        element: <ImportarCostosFijos />,
       },
       {
         path: 'costos/reportes',
-        element: page(
-          'Emitir reportes de gestión',
-          'Generación del reporte de Control Mensual del Costo Operacional (MA 122 03 01) para Gerencia.',
-          'Costos e Indicadores', '#ef4444', '📊', 'MA 122 03 01'
-        ),
+        element: <ReporteGestion />,
       },
 
       // ── Administrativa ─────────────────────────────────────────────────────
       {
         path: 'administrativa/solicitud-materiales',
-        element: page(
-          'Registrar solicitud de materiales',
-          'Registro de la solicitud de materiales asociada a una orden de servicio de mantenimiento.',
-          'Administrativa (apoyo)', '#64748b', '📋', 'MA 113 01 01'
-        ),
+        element: <SolicitudMateriales />,
       },
       {
         path: 'administrativa/controlar-materiales',
-        element: page(
-          'Controlar materiales del almacén',
-          'Atención de solicitudes y descuento de materiales del almacén de mantenimiento.',
-          'Administrativa (apoyo)', '#64748b', '📋'
-        ),
+        element: <ControlMateriales />,
       },
       {
         path: 'administrativa/documentacion-personal',
-        element: page(
-          'Gestionar documentación y personal',
-          'Soporte documental básico del personal operativo y administrativo.',
-          'Administrativa (apoyo)', '#64748b', '📋'
-        ),
+        element: <DocumentacionPersonal />,
       },
 
       // ── Inventario y Componentes ───────────────────────────────────────────
       {
         path: 'inventario/inventario-fisico',
-        element: page(
-          'Registrar inventario físico de la flota',
-          'Registro físico de las unidades que componen la flota vehicular.',
-          'Inventario y Componentes (apoyo)', '#06b6d4', '📦'
-        ),
+        element: <InventarioFisico />,
       },
       {
         path: 'inventario/ficha-llanta',
-        element: page(
-          'Registrar ficha de llanta / conjunto',
-          'Registro de componentes de alto valor con código único, dimensión/tipo y estado.',
-          'Inventario y Componentes (apoyo)', '#06b6d4', '📦'
-        ),
+        element: <FichaLlantaConjunto />,
       },
       {
         path: 'inventario/estado-componentes',
-        element: page(
-          'Consultar estado de componentes',
-          'Consulta del estado actual de llantas y conjuntos mayores (motor, caja de cambios).',
-          'Inventario y Componentes (apoyo)', '#06b6d4', '📦'
-        ),
+        element: <EstadoComponentes />,
+      },
+        ],
       },
     ],
   },
