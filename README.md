@@ -1,75 +1,71 @@
-# React + TypeScript + Vite
+# FRONT-FLOTA — FleetSys (Frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interfaz web del sistema de gestión de flota **FleetSys**. Es **solo el frontend**;
+consume por HTTP la API del backend, que vive en un repositorio separado
+(`ProyectoFlota`, Express + Prisma + PostgreSQL).
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** + **TypeScript** + **Vite**
+- **React Router** (rutas privadas con JWT)
+- **TanStack Query** + **axios** para el acceso a datos
+- **Tailwind CSS**, **react-hook-form** + **zod**, **recharts**, **sweetalert2**
 
-## React Compiler
+## Cómo se conecta con el backend
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Toda petición pasa por el cliente axios en `src/services/api.ts`:
 
-## Expanding the ESLint configuration
+- `baseURL` = variable de entorno `VITE_API_URL` (fallback `http://localhost:3001/api`).
+- El JWT se guarda en `localStorage` y un interceptor lo envía como
+  `Authorization: Bearer <token>` en cada request.
+- Si el backend responde `401`, el front borra el token y redirige a `/login`.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Cada módulo tiene su servicio en `src/services/*.service.ts`
+(`auth`, `vehiculo`, `conductor`, `movimiento`, `abastecimiento`, `mantenimiento`,
+`costo`, `indicador`, etc.), que corresponden a las rutas `/api/...` del backend.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Requisitos previos
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Node.js 20+
+- El **backend** corriendo (por defecto en `http://localhost:3000`). Ver el repo
+  `ProyectoFlota`: necesita su `.env` con `DATABASE_URL`, `npx prisma generate`,
+  migraciones y `npm run seed` antes de `npm run start:dev`.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Configuración
+
+Crea un archivo `.env` en la raíz apuntando a tu backend:
 
 ```
+VITE_API_URL=http://localhost:3000/api
+```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Ejecutar en local
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+npm install
+npm run dev      # http://localhost:5173
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Abre la URL de Vite y entra por `/login`. Las credenciales de prueba las crea el
+`prisma/seed.ts` del backend.
 
+## Scripts
+
+| Comando           | Qué hace                                  |
+|-------------------|-------------------------------------------|
+| `npm run dev`     | Servidor de desarrollo con HMR            |
+| `npm run build`   | Type-check (`tsc -b`) + build de producción |
+| `npm run preview` | Sirve el build de producción              |
+| `npm run lint`    | ESLint                                     |
+
+## Estructura
+
+```
+src/
+  services/    Cliente axios (api.ts) + un servicio por módulo
+  pages/       Vistas por dominio (operacion, mantenimiento, costos, inventario, seguridad, ...)
+  components/  Componentes reutilizables (incl. ui/)
+  context/     AuthContext, ThemeContext
+  router/      Definición de rutas + PrivateRoute (guard de JWT)
+  hooks/  types/  utils/
 ```
