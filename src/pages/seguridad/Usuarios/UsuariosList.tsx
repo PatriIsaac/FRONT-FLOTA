@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Users, Plus, Trash2 } from 'lucide-react';
+import { Users, Plus, Trash2, Edit2 } from 'lucide-react';
 import { usuarioService } from '../../../services/usuario.service';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 import { DataTable } from '../../../components/ui/DataTable';
@@ -8,18 +9,22 @@ import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Select } from '../../../components/ui/Select';
 import { alerts } from '../../../utils/alerts';
+import UsuarioForm from './UsuarioForm';
+import type { Usuario } from '../../../types/usuario';
 
 export default function UsuariosList() {
   const queryClient = useQueryClient();
   const { data: usuarios = [], isLoading } = useQuery({ queryKey: ['usuarios'], queryFn: usuarioService.getAllUsuarios });
   const { data: roles = [] } = useQuery({ queryKey: ['roles'], queryFn: usuarioService.getAllRoles });
   const { register, handleSubmit, reset } = useForm();
+  const [editando, setEditando] = useState<Usuario | null>(null);
+  const [modalAbierto, setModalAbierto] = useState(false);
 
   const createMut = useMutation({
     mutationFn: usuarioService.createUsuario,
     onSuccess: () => { queryClient.invalidateQueries({queryKey:['usuarios']}); alerts.success('Usuario registrado'); reset(); }
   });
-  
+
   const deleteMut = useMutation({
     mutationFn: usuarioService.deleteUsuario,
     onSuccess: () => { queryClient.invalidateQueries({queryKey:['usuarios']}); alerts.success('Usuario eliminado'); }
@@ -28,9 +33,18 @@ export default function UsuariosList() {
   const columns = [
     { key: 'nombres', header: 'Nombre', render: (d: any) => `${d.nombres} ${d.apellidos}` },
     { key: 'email', header: 'Email' },
-    { key: 'rol', header: 'Rol', render: (d: any) => d.rol?.nombre },
+    { key: 'rol', header: 'Rol', render: (d: any) => d.Rol?.nombre },
     { key: 'estado', header: 'Estado', render: (d: any) => <span className={`px-2 py-1 rounded text-xs font-bold ${d.estado ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`}>{d.estado ? 'Activo' : 'Inactivo'}</span> },
-    { key: 'acciones', header: 'Acciones', render: (d: any) => <Button variant="ghost" size="sm" onClick={() => deleteMut.mutate(d.usuarioId)}><Trash2 className="w-4 h-4 text-red-500"/></Button> }
+    {
+      key: 'acciones', header: 'Acciones', render: (d: any) => (
+        <div className="flex gap-2">
+          <Button variant="ghost" size="sm" onClick={() => { setEditando(d); setModalAbierto(true); }}>
+            <Edit2 className="w-4 h-4 text-indigo-600" />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => deleteMut.mutate(d.usuarioId)}><Trash2 className="w-4 h-4 text-red-500"/></Button>
+        </div>
+      )
+    }
   ];
 
   return (
@@ -43,7 +57,7 @@ export default function UsuariosList() {
         <Card className="lg:col-span-1 h-fit">
           <CardHeader><CardTitle>Nuevo Usuario</CardTitle></CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit((d: any) => createMut.mutate({...d, rolId: Number(d.rolId)}))} className="space-y-4">
+            <form onSubmit={handleSubmit((d: any) => createMut.mutate({...d, rolId: Number(d.rolId)}))} className="space-y-5">
               <Input label="Nombres" {...register('nombres', {required: true})} />
               <Input label="Apellidos" {...register('apellidos', {required: true})} />
               <Input label="Email" type="email" {...register('email', {required: true})} />
@@ -59,6 +73,11 @@ export default function UsuariosList() {
           </CardContent>
         </Card>
       </div>
+      <UsuarioForm
+        isOpen={modalAbierto}
+        onClose={() => { setModalAbierto(false); setEditando(null); }}
+        usuario={editando}
+      />
     </div>
   );
 }

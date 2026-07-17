@@ -1,3 +1,6 @@
+import type { Vehiculo } from './vehiculo';
+import type { Conductor } from './conductor';
+
 export interface MovimientoDiario {
   movimientoId: number;
   vehiculoId: number;
@@ -7,9 +10,9 @@ export interface MovimientoDiario {
   kmLlegada: number;
   horas: number;
   destino: string;
-  vehiculo?: any;
-  conductor?: any;
+  Vehiculo?: Vehiculo;
+  Conductor?: Conductor;
 }
 
-export type CreateMovimientoDiarioDTO = Omit<MovimientoDiario, 'movimientoId' | 'vehiculo' | 'conductor'>;
+export type CreateMovimientoDiarioDTO = Omit<MovimientoDiario, 'movimientoId' | 'Vehiculo' | 'Conductor'>;
 export type UpdateMovimientoDiarioDTO = Partial<CreateMovimientoDiarioDTO>;

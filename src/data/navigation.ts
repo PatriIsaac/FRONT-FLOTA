@@ -1,9 +1,12 @@
 // Navigation schema - Sistema de Administración de Flotas Vehiculares
+import {
+  Shield, Settings, Truck, Fuel, Wrench, BarChart3, ClipboardList, Package,
+  type LucideIcon,
+} from 'lucide-react';
 
 export interface NavItem {
   id: string;
   label: string;
-  code?: string;
   path: string;
   description: string;
 }
@@ -11,7 +14,7 @@ export interface NavItem {
 export interface NavSection {
   id: string;
   label: string;
-  icon: string;
+  icon: LucideIcon;
   color: string;
   allowedRoles?: string[];
   items: NavItem[];
@@ -21,7 +24,7 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     id: 'seguridad',
     label: 'Seguridad',
-    icon: '🔐',
+    icon: Shield,
     color: '#6366f1',
     allowedRoles: ['Administrador'],
     items: [
@@ -42,7 +45,7 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     id: 'configuracion',
     label: 'Configuración',
-    icon: '⚙️',
+    icon: Settings,
     color: '#8b5cf6',
     allowedRoles: ['Administrador', 'Gerencia'],
     items: [
@@ -87,14 +90,13 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     id: 'operacion',
     label: 'Operación de Flota',
-    icon: '🚛',
+    icon: Truck,
     color: '#0ea5e9',
     allowedRoles: ['Administrador', 'Gerencia', 'Analista de Costos', 'Encargado de Garaje', 'Conductor'],
     items: [
       {
         id: 'movimiento-diario',
         label: 'Registrar movimiento diario',
-        code: 'MA 122 01 01',
         path: '/operacion/movimiento-diario',
         description: 'Registro de salida, recorrido y llegada del vehículo; actualización del kilometraje acumulado',
       },
@@ -127,14 +129,13 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     id: 'abastecimiento',
     label: 'Abastecimiento',
-    icon: '⛽',
+    icon: Fuel,
     color: '#f59e0b',
     allowedRoles: ['Administrador', 'Gerencia', 'Encargado de Garaje'],
     items: [
       {
         id: 'emitir-orden-abastecimiento',
         label: 'Emitir orden de abastecimiento',
-        code: 'MA 122 01 02',
         path: '/abastecimiento/emitir-orden',
         description: 'Autorización previa emitida por el encargado de garaje antes del abastecimiento',
       },
@@ -161,7 +162,7 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     id: 'mantenimiento',
     label: 'Mantenimiento',
-    icon: '🔧',
+    icon: Wrench,
     color: '#10b981',
     allowedRoles: ['Administrador', 'Gerencia', 'Jefe de Mantenimiento'],
     items: [
@@ -174,28 +175,24 @@ export const NAV_SECTIONS: NavSection[] = [
       {
         id: 'registrar-orden-servicio',
         label: 'Registrar orden de servicio',
-        code: 'MA 122 02 01',
         path: '/mantenimiento/orden-servicio',
         description: 'Emisión de orden de servicio para mantenimiento en taller propio',
       },
       {
         id: 'autorizar-servicio-externo',
         label: 'Autorizar servicio externo',
-        code: 'MA 122 02 02',
         path: '/mantenimiento/servicio-externo',
         description: 'Autorización de servicio para mantenimiento en taller de terceros',
       },
       {
         id: 'registrar-mano-obra',
         label: 'Registrar mano de obra y repuestos',
-        code: 'MA 122 02 04',
         path: '/mantenimiento/mano-obra-repuestos',
         description: 'Registro de insumos, repuestos y horas de mano de obra utilizadas',
       },
       {
         id: 'registrar-costo-mensual',
         label: 'Registrar costo mensual',
-        code: 'MA 122 02 03',
         path: '/mantenimiento/costo-mensual',
         description: 'Consolidación de los costos de mantenimiento del periodo',
       },
@@ -210,7 +207,7 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     id: 'costos',
     label: 'Costos e Indicadores',
-    icon: '📊',
+    icon: BarChart3,
     color: '#ef4444',
     allowedRoles: ['Administrador', 'Gerencia', 'Analista de Costos'],
     items: [
@@ -247,7 +244,6 @@ export const NAV_SECTIONS: NavSection[] = [
       {
         id: 'emitir-reportes',
         label: 'Emitir reportes de gestión',
-        code: 'MA 122 03 01',
         path: '/costos/reportes',
         description: 'Generación del reporte de Control Mensual del Costo Operacional para Gerencia',
       },
@@ -256,14 +252,13 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     id: 'administrativa',
     label: 'Administrativa (apoyo)',
-    icon: '📋',
+    icon: ClipboardList,
     color: '#64748b',
     allowedRoles: ['Administrador', 'Gerencia'],
     items: [
       {
         id: 'solicitud-materiales',
         label: 'Registrar solicitud de materiales',
-        code: 'MA 113 01 01',
         path: '/administrativa/solicitud-materiales',
         description: 'Registro de la solicitud de materiales asociada a una orden de servicio de mantenimiento',
       },
@@ -284,7 +279,7 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     id: 'inventario',
     label: 'Inventario y Componentes (apoyo)',
-    icon: '📦',
+    icon: Package,
     color: '#06b6d4',
     allowedRoles: ['Administrador', 'Jefe de Mantenimiento'],
     items: [

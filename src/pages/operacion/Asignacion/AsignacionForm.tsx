@@ -46,7 +46,7 @@ export default function AsignacionForm({ isOpen, onClose, asignacion }: Props) {
       reset({
         vehiculoId: asignacion.vehiculoId,
         areaId: asignacion.areaId,
-        conductorId: asignacion.conductorId,
+        conductorId: asignacion.conductorId ?? undefined,
         fechaInicio: asignacion.fechaInicio ? new Date(asignacion.fechaInicio).toISOString().split('T')[0] : '',
         fechaFin: asignacion.fechaFin ? new Date(asignacion.fechaFin).toISOString().split('T')[0] : '',
       });
@@ -116,7 +116,7 @@ export default function AsignacionForm({ isOpen, onClose, asignacion }: Props) {
           error={errors.conductorId?.message}
           options={[
             { value: 0, label: 'Seleccione un conductor...' },
-            ...conductores.map(c => ({ value: c.conductorId, label: `${c.nombres} ${c.apellidos}` }))
+            ...conductores.map(c => ({ value: c.conductorId, label: c.nombre }))
           ]}
         />
 

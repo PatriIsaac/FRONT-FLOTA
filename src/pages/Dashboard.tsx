@@ -12,6 +12,9 @@ import {
 } from 'recharts';
 import { Truck, CheckCircle, Gauge, Fuel } from 'lucide-react';
 
+// Datos de ejemplo: no hay todavía un endpoint de histórico mensual agregado ni de auditoría
+// de eventos. Se muestran rotulados como ejemplo (mismo criterio que ReporteGestion.tsx) en vez
+// de presentarlos como si vinieran de una consulta real.
 const chartData = [
   { name: 'Ene', combustible: 4000, mantenimiento: 2400 },
   { name: 'Feb', combustible: 3000, mantenimiento: 1398 },
@@ -22,11 +25,11 @@ const chartData = [
 ];
 
 const recentActivity = [
-  { evento: 'Movimiento diario registrado', modulo: 'Operación de Flota', usuario: 'J. Quispe', fecha: 'Hoy 08:42', estado: 'success' },
-  { evento: 'Orden de servicio emitida', modulo: 'Mantenimiento', usuario: 'M. Torres', fecha: 'Hoy 07:15', estado: 'info' },
-  { evento: 'Abastecimiento registrado', modulo: 'Abastecimiento', usuario: 'R. Mamani', fecha: 'Ayer 17:30', estado: 'success' },
-  { evento: 'Nuevo conductor registrado', modulo: 'Configuración', usuario: 'Admin', fecha: 'Ayer 14:00', estado: 'success' },
-  { evento: 'Reporte mensual generado', modulo: 'Costos e Indicadores', usuario: 'L. García', fecha: '27 Jun', estado: 'warning' },
+  { evento: 'Movimiento diario registrado', modulo: 'Operación de Flota', usuario: 'Encargado de Garaje', fecha: 'Hoy 08:42', estado: 'success' },
+  { evento: 'Orden de servicio emitida', modulo: 'Mantenimiento', usuario: 'Jefe de Mantenimiento', fecha: 'Hoy 07:15', estado: 'info' },
+  { evento: 'Abastecimiento registrado', modulo: 'Abastecimiento', usuario: 'Encargado de Garaje', fecha: 'Ayer 17:30', estado: 'success' },
+  { evento: 'Nuevo conductor registrado', modulo: 'Configuración', usuario: 'Administrador', fecha: 'Ayer 14:00', estado: 'success' },
+  { evento: 'Reporte mensual generado', modulo: 'Costos e Indicadores', usuario: 'Analista de Costos', fecha: '27 Jun', estado: 'warning' },
 ];
 
 // Section icon accent colors (theme-safe: only hue, not bg/text classes)
@@ -121,7 +124,7 @@ export default function Dashboard() {
       <div className="dash-charts">
         <Card>
           <CardHeader>
-            <CardTitle>Gastos: Combustible vs Mantenimiento</CardTitle>
+            <CardTitle>Gastos: Combustible vs Mantenimiento (datos de ejemplo)</CardTitle>
           </CardHeader>
           <CardContent>
             <div style={{ height: 280 }}>
@@ -149,7 +152,7 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Tendencia de Recorrido (km)</CardTitle>
+            <CardTitle>Tendencia de Recorrido, km (datos de ejemplo)</CardTitle>
           </CardHeader>
           <CardContent>
             <div style={{ height: 280 }}>
@@ -199,7 +202,7 @@ export default function Dashboard() {
                     className="dash-module-card__icon"
                     style={{ background: `${accent}18`, color: accent }}
                   >
-                    <span style={{ fontSize: 20 }}>{section.icon}</span>
+                    <section.icon size={20} />
                   </div>
                   <div>
                     <h3 className="dash-module-card__name" style={{ color: accent }}>{section.label}</h3>
@@ -222,7 +225,7 @@ export default function Dashboard() {
       {/* ── Recent Activity ── */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between py-4">
-          <CardTitle>Actividad reciente</CardTitle>
+          <CardTitle>Actividad reciente (datos de ejemplo)</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <DataTable columns={columns} data={recentActivity} />

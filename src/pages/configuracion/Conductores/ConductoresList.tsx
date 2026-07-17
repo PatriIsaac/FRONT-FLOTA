@@ -1,12 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { conductorService } from '../../../services/conductor.service';
-import { vehiculoService } from '../../../services/vehiculo.service';
 import type { Conductor } from '../../../types/conductor';
-import type { Vehiculo } from '../../../types/vehiculo';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
+import { Input } from '../../../components/ui/Input';
 import { DataTable } from '../../../components/ui/DataTable';
 import { Badge } from '../../../components/ui/Badge';
 import { alerts } from '../../../utils/alerts';
@@ -15,6 +14,7 @@ import ConductorForm from './ConductorForm';
 export default function ConductoresList() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingConductor, setEditingConductor] = useState<Conductor | null>(null);
+  const [busqueda, setBusqueda] = useState('');
   const queryClient = useQueryClient();
 
   const { data: conductores = [], isLoading: isLoadingConductores } = useQuery({
@@ -22,10 +22,13 @@ export default function ConductoresList() {
     queryFn: conductorService.getAll
   });
 
-  const { data: vehiculos = [] } = useQuery({
-    queryKey: ['vehiculos'],
-    queryFn: vehiculoService.getAll
-  });
+  const conductoresFiltrados = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    if (!q) return conductores;
+    return conductores.filter(c =>
+      c.nombre.toLowerCase().includes(q) || c.documento.toLowerCase().includes(q)
+    );
+  }, [conductores, busqueda]);
 
   const deleteMutation = useMutation({
     mutationFn: conductorService.delete,
@@ -53,8 +56,8 @@ export default function ConductoresList() {
     { key: 'conductorId', header: 'ID' },
     { key: 'documento', header: 'Documento' },
     { key: 'nombre', header: 'Nombre Completo' },
-    { 
-      key: 'osActivo', 
+    {
+      key: 'osActivo',
       header: 'Estado',
       render: (c: Conductor) => (
         <Badge variant={c.osActivo ? 'success' : 'danger'}>
@@ -90,13 +93,22 @@ export default function ConductoresList() {
         </Button>
       </div>
 
+      <div className="max-w-sm">
+        <Input
+          placeholder="Buscar por nombre o documento..."
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+        />
+      </div>
+
       <Card>
         <CardContent className="p-0">
           <DataTable
             columns={columns}
-            data={conductores}
+            data={conductoresFiltrados}
             isLoading={isLoadingConductores}
             emptyMessage="No se encontraron conductores registrados."
+            pageSize={10}
           />
         </CardContent>
       </Card>
@@ -105,7 +117,6 @@ export default function ConductoresList() {
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         conductor={editingConductor}
-        vehiculos={vehiculos}
       />
     </div>
   );

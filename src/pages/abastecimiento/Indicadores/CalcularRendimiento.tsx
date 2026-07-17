@@ -52,7 +52,7 @@ export default function CalcularRendimiento() {
     // Sumamos galones
     abastMes.forEach(a => {
       if (!agrupado[a.vehiculoId]) {
-        agrupado[a.vehiculoId] = { vehiculo: a.vehiculo, vehiculoId: a.vehiculoId, totalGalones: 0, totalKm: 0 };
+        agrupado[a.vehiculoId] = { vehiculo: a.Vehiculo, vehiculoId: a.vehiculoId, totalGalones: 0, totalKm: 0 };
       }
       agrupado[a.vehiculoId].totalGalones += (a.galones || 0);
     });
@@ -60,7 +60,7 @@ export default function CalcularRendimiento() {
     // Sumamos km de movimientos
     movMes.forEach(m => {
       if (!agrupado[m.vehiculoId]) {
-        agrupado[m.vehiculoId] = { vehiculo: m.vehiculo, vehiculoId: m.vehiculoId, totalGalones: 0, totalKm: 0 };
+        agrupado[m.vehiculoId] = { vehiculo: m.Vehiculo, vehiculoId: m.vehiculoId, totalGalones: 0, totalKm: 0 };
       }
       const kmRecorridos = (m.kmLlegada || 0) - (m.kmSalida || 0);
       agrupado[m.vehiculoId].totalKm += (kmRecorridos > 0 ? kmRecorridos : 0);

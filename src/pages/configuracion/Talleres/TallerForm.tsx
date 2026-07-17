@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal } from '../../../components/ui/Modal';
 import { Input } from '../../../components/ui/Input';
-import { Select } from '../../../components/ui/Select';
 import { Button } from '../../../components/ui/Button';
 import { tallerService } from '../../../services/taller.service';
 import type { Taller } from '../../../types/taller';
@@ -13,9 +12,9 @@ import { alerts } from '../../../utils/alerts';
 
 const tallerSchema = z.object({
   nombre: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
-  tipo: z.enum(['Propio', 'Tercero']),
+  ruc: z.string().min(1, 'El RUC es obligatorio'),
   direccion: z.string().min(5, 'La dirección es obligatoria'),
-  contacto: z.string().min(3, 'El contacto es obligatorio'),
+  telefono: z.string().min(1, 'El teléfono es obligatorio'),
 });
 
 type TallerFormData = z.infer<typeof tallerSchema>;
@@ -28,7 +27,7 @@ interface Props {
 
 export default function TallerForm({ isOpen, onClose, taller }: Props) {
   const queryClient = useQueryClient();
-  
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm<TallerFormData>({
     resolver: zodResolver(tallerSchema),
   });
@@ -37,30 +36,30 @@ export default function TallerForm({ isOpen, onClose, taller }: Props) {
     if (taller) {
       reset({
         nombre: taller.nombre,
-        tipo: taller.tipo,
+        ruc: taller.ruc,
         direccion: taller.direccion,
-        contacto: taller.contacto,
+        telefono: taller.telefono,
       });
     } else {
       reset({
         nombre: '',
-        tipo: 'Tercero',
+        ruc: '',
         direccion: '',
-        contacto: '',
+        telefono: '',
       });
     }
   }, [taller, reset, isOpen]);
 
   const mutation = useMutation({
-    mutationFn: (data: TallerFormData) => 
-      taller ? tallerService.update(taller.id, data) : tallerService.create(data),
+    mutationFn: (data: TallerFormData) =>
+      taller ? tallerService.update(taller.tallerId, data) : tallerService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['talleres'] });
       alerts.success(taller ? 'Taller actualizado exitosamente' : 'Taller registrado exitosamente');
       onClose();
     },
     onError: (error: any) => {
-      alerts.error(error.message || 'Error al guardar el taller');
+      alerts.error(error.response?.data?.error || 'Error al guardar el taller');
     }
   });
 
@@ -71,37 +70,34 @@ export default function TallerForm({ isOpen, onClose, taller }: Props) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={taller ? 'Editar Taller' : 'Nuevo Taller'}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <Input 
-          label="Nombre del Taller" 
+        <Input
+          label="Razón Social"
           placeholder="Ej: Automotriz del Centro"
-          {...register('nombre')} 
-          error={errors.nombre?.message} 
-        />
-        
-        <Select 
-          label="Tipo de Taller" 
-          {...register('tipo')} 
-          error={errors.tipo?.message}
-          options={[
-            { value: 'Propio', label: 'Propio (Interno)' },
-            { value: 'Tercero', label: 'Tercero (Externo)' },
-          ]}
+          {...register('nombre')}
+          error={errors.nombre?.message}
         />
 
-        <Input 
-          label="Dirección" 
+        <Input
+          label="RUC"
+          placeholder="20123456789"
+          {...register('ruc')}
+          error={errors.ruc?.message}
+        />
+
+        <Input
+          label="Dirección"
           placeholder="Av. Principal 456"
-          {...register('direccion')} 
-          error={errors.direccion?.message} 
+          {...register('direccion')}
+          error={errors.direccion?.message}
         />
 
-        <Input 
-          label="Contacto / Teléfono" 
-          placeholder="Juan Perez - 987654321"
-          {...register('contacto')} 
-          error={errors.contacto?.message} 
+        <Input
+          label="Teléfono"
+          placeholder="987654321"
+          {...register('telefono')}
+          error={errors.telefono?.message}
         />
-        
+
         <div className="flex justify-end gap-4 pt-4">
           <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>

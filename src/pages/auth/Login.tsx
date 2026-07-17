@@ -8,6 +8,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { authService } from '../../services/auth.service';
 import { alerts } from '../../utils/alerts';
 import { useTheme } from '../../context/ThemeContext';
+import logoIcon from '../../assets/logo-icon.png';
 
 const loginSchema = z.object({
   email: z.string().email('Correo inválido').min(1, 'El correo es requerido'),
@@ -71,7 +72,7 @@ export default function Login() {
             {/* Brand block */}
             <div className="lp-side__brand">
               <div className="lp-side__logo">
-                <Truck size={30} />
+                <img src={logoIcon} alt="SAFV" width={36} height={36} />
               </div>
               <h1 className="lp-side__name">SAFV</h1>
               <p className="lp-side__tagline">
@@ -121,7 +122,7 @@ export default function Login() {
 
           {/* Mobile-only logo */}
           <div className="lp-mob-header">
-            <div className="lp-mob-logo"><Truck size={22} /></div>
+            <div className="lp-mob-logo"><img src={logoIcon} alt="SAFV" width={22} height={22} /></div>
             <span className="lp-mob-name">SAFV</span>
           </div>
 

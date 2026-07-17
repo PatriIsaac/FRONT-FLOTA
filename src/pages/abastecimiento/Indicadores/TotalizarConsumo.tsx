@@ -40,7 +40,7 @@ export default function TotalizarConsumo() {
     
     abastMes.forEach(a => {
       if (!agrupado[a.vehiculoId]) {
-        agrupado[a.vehiculoId] = { vehiculo: a.vehiculo, vehiculoId: a.vehiculoId, totalGalones: 0, totalCosto: 0, cantidadVeces: 0 };
+        agrupado[a.vehiculoId] = { vehiculo: a.Vehiculo, vehiculoId: a.vehiculoId, totalGalones: 0, totalCosto: 0, cantidadVeces: 0 };
       }
       const gal = a.galones || 0;
       const costo = a.costo || 0;

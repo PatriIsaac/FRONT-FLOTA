@@ -44,7 +44,7 @@ export default function TotalizarKmHoras() {
       
       if (!agrupado[m.vehiculoId]) {
         agrupado[m.vehiculoId] = {
-          vehiculo: m.vehiculo,
+          vehiculo: m.Vehiculo,
           vehiculoId: m.vehiculoId,
           totalKm: 0,
           totalHoras: 0,

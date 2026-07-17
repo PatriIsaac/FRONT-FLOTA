@@ -33,7 +33,7 @@ export default function AsignacionList() {
   });
 
   const handleDelete = async (a: Asignacion) => {
-    if (await alerts.delete(`la asignación del vehículo ${a.vehiculo?.placa || a.vehiculoId}`)) {
+    if (await alerts.delete(`la asignación del vehículo ${a.Vehiculo?.placa || a.vehiculoId}`)) {
       deleteMutation.mutate(a.asignacionId);
     }
   };
@@ -44,20 +44,20 @@ export default function AsignacionList() {
   };
 
   const columns = [
-    { 
-      key: 'vehiculo', 
+    {
+      key: 'vehiculo',
       header: 'Vehículo',
-      render: (a: Asignacion) => a.vehiculo ? `${a.vehiculo.placa} (${a.vehiculo.codigoPatrimonio})` : `ID: ${a.vehiculoId}`
+      render: (a: Asignacion) => a.Vehiculo ? `${a.Vehiculo.placa} (${a.Vehiculo.codigoPatrimonio})` : `ID: ${a.vehiculoId}`
     },
-    { 
-      key: 'area', 
+    {
+      key: 'area',
       header: 'Área',
-      render: (a: Asignacion) => a.area?.nombre || `ID: ${a.areaId}`
+      render: (a: Asignacion) => a.Area?.nombre || `ID: ${a.areaId}`
     },
-    { 
-      key: 'conductor', 
+    {
+      key: 'conductor',
       header: 'Conductor',
-      render: (a: Asignacion) => a.conductor ? `${a.conductor.nombres} ${a.conductor.apellidos}` : `ID: ${a.conductorId}`
+      render: (a: Asignacion) => a.Conductor ? a.Conductor.nombre : (a.conductorId ? `ID: ${a.conductorId}` : '—')
     },
     { 
       key: 'fechas', 

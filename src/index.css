@@ -2,6 +2,21 @@
 
 @import "tailwindcss";
 
+/* El selector nativo de fecha/hora del navegador sigue su propio esquema de color,
+   no el de la app — sin esto se ve un calendario blanco sobre fondo oscuro. */
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="month"],
+[data-theme="dark"] input[type="time"],
+[data-theme="dark"] input[type="datetime-local"] {
+  color-scheme: dark;
+}
+[data-theme="light"] input[type="date"],
+[data-theme="light"] input[type="month"],
+[data-theme="light"] input[type="time"],
+[data-theme="light"] input[type="datetime-local"] {
+  color-scheme: light;
+}
+
 /* ============================================================
    PREMIUM THEME VARIABLES
    ============================================================ */
@@ -742,6 +757,9 @@ body {
   overflow: hidden;
   color: var(--text-primary);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Sin esto, una tabla ancha dentro de una celda de grid/flex la empuja fuera de
+     su columna en vez de scrollear internamente (min-content por defecto en grid items). */
+  min-width: 0;
 }
 .ui-card:hover {
   box-shadow: var(--shadow-md);

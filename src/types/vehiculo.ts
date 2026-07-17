@@ -1,3 +1,8 @@
+import type { CategoriaVehiculo } from './categoriaVehiculo';
+
+export const ESTADOS_VEHICULO = ['Operativo', 'Mantenimiento', 'Inactivo', 'DeBaja'] as const;
+export type EstadoVehiculo = typeof ESTADOS_VEHICULO[number];
+
 export interface Vehiculo {
   vehiculoId: number;
   codigoPatrimonio: string;
@@ -6,8 +11,9 @@ export interface Vehiculo {
   valorNuevo: number;
   valorResidual: number;
   vidaUtilAnios: number;
-  estado: string;
+  estado: EstadoVehiculo;
+  CategoriaVehiculo?: CategoriaVehiculo;
 }
 
-export type CreateVehiculoDTO = Omit<Vehiculo, 'vehiculoId'>;
+export type CreateVehiculoDTO = Omit<Vehiculo, 'vehiculoId' | 'CategoriaVehiculo'>;
 export type UpdateVehiculoDTO = Partial<CreateVehiculoDTO>;

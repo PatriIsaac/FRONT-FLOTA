@@ -12,9 +12,9 @@ import { alerts } from '../../../utils/alerts';
 
 const servicentroSchema = z.object({
   nombre: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
+  ruc: z.string().min(1, 'El RUC es obligatorio'),
   direccion: z.string().min(5, 'La dirección es obligatoria'),
-  distrito: z.string().min(2, 'El distrito es obligatorio'),
-  contacto: z.string().min(3, 'El contacto es obligatorio'),
+  telefono: z.string().min(1, 'El teléfono es obligatorio'),
 });
 
 type ServicentroFormData = z.infer<typeof servicentroSchema>;
@@ -27,7 +27,7 @@ interface Props {
 
 export default function ServicentroForm({ isOpen, onClose, servicentro }: Props) {
   const queryClient = useQueryClient();
-  
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ServicentroFormData>({
     resolver: zodResolver(servicentroSchema),
   });
@@ -36,30 +36,30 @@ export default function ServicentroForm({ isOpen, onClose, servicentro }: Props)
     if (servicentro) {
       reset({
         nombre: servicentro.nombre,
+        ruc: servicentro.ruc,
         direccion: servicentro.direccion,
-        distrito: servicentro.distrito,
-        contacto: servicentro.contacto,
+        telefono: servicentro.telefono,
       });
     } else {
       reset({
         nombre: '',
+        ruc: '',
         direccion: '',
-        distrito: '',
-        contacto: '',
+        telefono: '',
       });
     }
   }, [servicentro, reset, isOpen]);
 
   const mutation = useMutation({
-    mutationFn: (data: ServicentroFormData) => 
-      servicentro ? servicentroService.update(servicentro.id, data) : servicentroService.create(data),
+    mutationFn: (data: ServicentroFormData) =>
+      servicentro ? servicentroService.update(servicentro.servicentroId, data) : servicentroService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['servicentros'] });
       alerts.success(servicentro ? 'Servicentro actualizado' : 'Servicentro registrado');
       onClose();
     },
     onError: (error: any) => {
-      alerts.error(error.message || 'Error al guardar el servicentro');
+      alerts.error(error.response?.data?.error || 'Error al guardar el servicentro');
     }
   });
 
@@ -70,34 +70,34 @@ export default function ServicentroForm({ isOpen, onClose, servicentro }: Props)
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={servicentro ? 'Editar Servicentro' : 'Nuevo Servicentro'}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <Input 
-          label="Nombre del Servicentro" 
+        <Input
+          label="Razón Social"
           placeholder="Ej: Grifo Repsol"
-          {...register('nombre')} 
-          error={errors.nombre?.message} 
+          {...register('nombre')}
+          error={errors.nombre?.message}
         />
-        
-        <Input 
-          label="Dirección" 
+
+        <Input
+          label="RUC"
+          placeholder="20123456789"
+          {...register('ruc')}
+          error={errors.ruc?.message}
+        />
+
+        <Input
+          label="Dirección"
           placeholder="Av. Javier Prado 123"
-          {...register('direccion')} 
-          error={errors.direccion?.message} 
+          {...register('direccion')}
+          error={errors.direccion?.message}
         />
 
-        <Input 
-          label="Distrito / Ciudad" 
-          placeholder="San Isidro"
-          {...register('distrito')} 
-          error={errors.distrito?.message} 
+        <Input
+          label="Teléfono"
+          placeholder="987654321"
+          {...register('telefono')}
+          error={errors.telefono?.message}
         />
 
-        <Input 
-          label="Contacto / Teléfono" 
-          placeholder="Pedro Ruiz - 987654321"
-          {...register('contacto')} 
-          error={errors.contacto?.message} 
-        />
-        
         <div className="flex justify-end gap-4 pt-4">
           <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>

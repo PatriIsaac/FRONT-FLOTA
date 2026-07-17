@@ -9,6 +9,10 @@ export const usuarioService = {
     const { data } = await api.post('/usuarios', payload);
     return data;
   },
+  updateUsuario: async (id: number, payload: any) => {
+    const { data } = await api.patch(`/usuarios/${id}`, payload);
+    return data;
+  },
   deleteUsuario: async (id: number) => {
     await api.delete(`/usuarios/${id}`);
   },

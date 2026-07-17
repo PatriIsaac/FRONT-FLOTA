@@ -1,15 +1,20 @@
 import { api } from './api';
+import type { Servicentro, CreateServicentroDTO, UpdateServicentroDTO } from '../types/servicentro';
 
 export const servicentroService = {
-  getAll: async () => {
-    const { data } = await api.get('/configuracion/servicentros');
+  getAll: async (): Promise<Servicentro[]> => {
+    const { data } = await api.get('/servicentros');
     return data;
   },
-  create: async (payload: any) => {
-    const { data } = await api.post('/configuracion/servicentros', payload);
+  create: async (payload: CreateServicentroDTO): Promise<Servicentro> => {
+    const { data } = await api.post('/servicentros', payload);
     return data;
   },
-  delete: async (id: number) => {
-    await api.delete(`/configuracion/servicentros/${id}`);
+  update: async (id: number, payload: UpdateServicentroDTO): Promise<Servicentro> => {
+    const { data } = await api.patch(`/servicentros/${id}`, payload);
+    return data;
+  },
+  delete: async (id: number): Promise<void> => {
+    await api.delete(`/servicentros/${id}`);
   }
 };

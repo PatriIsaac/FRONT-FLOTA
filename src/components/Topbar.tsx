@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, Bell, Settings, User as UserIcon, Sun, Moon } from 'lucide-react';
+import { LogOut, User as UserIcon, Sun, Moon } from 'lucide-react';
 import { NAV_SECTIONS } from '../data/navigation';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../context/ThemeContext';
@@ -70,16 +70,6 @@ export default function Topbar() {
 
       {/* Actions */}
       <div className="topbar-actions" ref={dropdownRef}>
-        {/* Notifications */}
-        <button className="topbar-icon-btn" title="Notificaciones" id="topbar-notifications-btn">
-          <Bell size={16} />
-        </button>
-
-        {/* Settings */}
-        <button className="topbar-icon-btn" title="Configuración" id="topbar-settings-btn">
-          <Settings size={16} />
-        </button>
-
         {/* Theme toggle */}
         <button
           id="topbar-theme-btn"

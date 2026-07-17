@@ -1,7 +1,11 @@
 export interface Taller {
-  id: string;
+  tallerId: number;
   nombre: string;
-  tipo: 'Propio' | 'Tercero';
+  ruc: string;
   direccion: string;
-  contacto: string;
+  telefono: string;
+  estado: boolean;
 }
+
+export type CreateTallerDTO = Omit<Taller, 'tallerId' | 'estado'>;
+export type UpdateTallerDTO = Partial<CreateTallerDTO> & { estado?: boolean };

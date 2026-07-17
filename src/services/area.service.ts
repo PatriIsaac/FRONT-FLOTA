@@ -1,15 +1,20 @@
 import { api } from './api';
+import type { Area } from '../types/area';
 
 export const areaService = {
-  getAll: async () => {
-    const { data } = await api.get('/configuracion/areas');
+  getAll: async (): Promise<Area[]> => {
+    const { data } = await api.get('/areas');
     return data;
   },
-  create: async (payload: any) => {
-    const { data } = await api.post('/configuracion/areas', payload);
+  create: async (payload: Omit<Area, 'areaId'>): Promise<Area> => {
+    const { data } = await api.post('/areas', payload);
     return data;
   },
-  delete: async (id: number) => {
-    await api.delete(`/configuracion/areas/${id}`);
+  update: async (id: number, payload: Partial<Omit<Area, 'areaId'>>): Promise<Area> => {
+    const { data } = await api.patch(`/areas/${id}`, payload);
+    return data;
+  },
+  delete: async (id: number): Promise<void> => {
+    await api.delete(`/areas/${id}`);
   }
 };

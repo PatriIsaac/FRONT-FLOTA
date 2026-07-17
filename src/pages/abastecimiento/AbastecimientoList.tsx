@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { abastecimientoService } from '../../services/abastecimiento.service';
 import type { Abastecimiento } from '../../types/abastecimiento';
 import { Card, CardContent } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import { DataTable } from '../../components/ui/DataTable';
 import { alerts } from '../../utils/alerts';
 import AbastecimientoForm from './AbastecimientoForm';
@@ -12,12 +13,23 @@ import AbastecimientoForm from './AbastecimientoForm';
 export default function AbastecimientoList() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAbastecimiento, setEditingAbastecimiento] = useState<Abastecimiento | null>(null);
+  const [desde, setDesde] = useState('');
+  const [hasta, setHasta] = useState('');
   const queryClient = useQueryClient();
 
   const { data: abastecimientos = [], isLoading } = useQuery({
     queryKey: ['abastecimientos'],
     queryFn: abastecimientoService.getAll
   });
+
+  const abastecimientosFiltrados = useMemo(() => {
+    return abastecimientos.filter(a => {
+      const fecha = a.fecha.slice(0, 10);
+      if (desde && fecha < desde) return false;
+      if (hasta && fecha > hasta) return false;
+      return true;
+    });
+  }, [abastecimientos, desde, hasta]);
 
   const deleteMutation = useMutation({
     mutationFn: abastecimientoService.delete,
@@ -41,7 +53,7 @@ export default function AbastecimientoList() {
   const columns = [
     { key: 'abastecimientoId', header: 'ID' },
     { key: 'numeroOrden', header: 'Orden' },
-    { key: 'vehiculoId', header: 'ID Vehículo', render: (a: Abastecimiento) => a.vehiculo?.placa || `ID: ${a.vehiculoId}` },
+    { key: 'vehiculoId', header: 'ID Vehículo', render: (a: Abastecimiento) => a.Vehiculo?.placa || `ID: ${a.vehiculoId}` },
     { key: 'fecha', header: 'Fecha', render: (a: Abastecimiento) => new Date(a.fecha).toLocaleDateString() },
     { key: 'tipoCombustible', header: 'Combustible' },
     { key: 'galones', header: 'Galones' },
@@ -75,20 +87,26 @@ export default function AbastecimientoList() {
         </Button>
       </div>
 
+      <div className="flex gap-4 items-end max-w-md">
+        <Input label="Desde" type="date" value={desde} onChange={(e) => setDesde(e.target.value)} />
+        <Input label="Hasta" type="date" value={hasta} onChange={(e) => setHasta(e.target.value)} />
+      </div>
+
       <Card>
         <CardContent className="p-0">
-          <DataTable 
+          <DataTable
             columns={columns}
-            data={abastecimientos}
+            data={abastecimientosFiltrados}
             isLoading={isLoading}
             emptyMessage="No se encontraron registros."
+            pageSize={15}
           />
         </CardContent>
       </Card>
 
-      <AbastecimientoForm 
-        isOpen={isFormOpen} 
-        onClose={() => setIsFormOpen(false)} 
+      <AbastecimientoForm
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
         abastecimiento={editingAbastecimiento}
       />
     </div>

@@ -6,10 +6,10 @@ export interface Asignacion {
   asignacionId: number;
   vehiculoId: number;
   areaId: number;
-  conductorId: number;
+  conductorId: number | null;
   fechaInicio: string;
   fechaFin: string | null;
-  vehiculo?: Vehiculo;
-  area?: Area;
-  conductor?: Conductor;
+  Vehiculo?: Vehiculo;
+  Area?: Area;
+  Conductor?: Conductor;
 }

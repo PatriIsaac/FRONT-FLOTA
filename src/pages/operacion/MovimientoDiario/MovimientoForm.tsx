@@ -2,17 +2,20 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Modal } from '../../../components/ui/Modal';
 import { Input } from '../../../components/ui/Input';
+import { Select } from '../../../components/ui/Select';
 import { Button } from '../../../components/ui/Button';
 import { movimientoService } from '../../../services/movimiento.service';
+import { vehiculoService } from '../../../services/vehiculo.service';
+import { conductorService } from '../../../services/conductor.service';
 import type { MovimientoDiario } from '../../../types/movimiento';
 import { alerts } from '../../../utils/alerts';
 
 const movimientoSchema = z.object({
-  vehiculoId: z.coerce.number().min(1, 'Vehículo requerido'),
-  conductorId: z.coerce.number().min(1, 'Conductor requerido'),
+  vehiculoId: z.coerce.number().min(1, 'Seleccione un vehículo'),
+  conductorId: z.coerce.number().min(1, 'Seleccione un conductor'),
   fecha: z.string().min(1, 'Fecha requerida'),
   kmSalida: z.coerce.number().min(0, 'Requerido'),
   kmLlegada: z.coerce.number().min(0, 'Requerido'),
@@ -33,7 +36,9 @@ interface Props {
 
 export default function MovimientoForm({ isOpen, onClose, movimiento }: Props) {
   const queryClient = useQueryClient();
-  
+  const { data: vehiculos = [] } = useQuery({ queryKey: ['vehiculos'], queryFn: vehiculoService.getAll });
+  const { data: conductores = [] } = useQuery({ queryKey: ['conductores'], queryFn: conductorService.getAll });
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm<MovimientoFormData>({
     resolver: zodResolver(movimientoSchema),
   });
@@ -51,8 +56,8 @@ export default function MovimientoForm({ isOpen, onClose, movimiento }: Props) {
       });
     } else {
       reset({
-        vehiculoId: 1,
-        conductorId: 1,
+        vehiculoId: 0,
+        conductorId: 0,
         fecha: new Date().toISOString().split('T')[0],
         kmSalida: 0,
         kmLlegada: 0,
@@ -63,7 +68,7 @@ export default function MovimientoForm({ isOpen, onClose, movimiento }: Props) {
   }, [movimiento, reset, isOpen]);
 
   const mutation = useMutation({
-    mutationFn: (data: MovimientoFormData) => 
+    mutationFn: (data: MovimientoFormData) =>
       movimiento ? movimientoService.update(movimiento.movimientoId, data) : movimientoService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['movimientos'] });
@@ -83,8 +88,24 @@ export default function MovimientoForm({ isOpen, onClose, movimiento }: Props) {
     <Modal isOpen={isOpen} onClose={onClose} title={movimiento ? 'Editar Movimiento' : 'Nuevo Movimiento'}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-2 gap-6">
-          <Input label="ID Vehículo" type="number" {...register('vehiculoId')} error={errors.vehiculoId?.message} />
-          <Input label="ID Conductor" type="number" {...register('conductorId')} error={errors.conductorId?.message} />
+          <Select
+            label="Vehículo"
+            {...register('vehiculoId')}
+            error={errors.vehiculoId?.message}
+            options={[
+              { value: 0, label: 'Seleccione un vehículo...' },
+              ...vehiculos.map(v => ({ value: v.vehiculoId, label: `${v.placa} - ${v.codigoPatrimonio}` })),
+            ]}
+          />
+          <Select
+            label="Conductor"
+            {...register('conductorId')}
+            error={errors.conductorId?.message}
+            options={[
+              { value: 0, label: 'Seleccione un conductor...' },
+              ...conductores.map(c => ({ value: c.conductorId, label: c.nombre })),
+            ]}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-6">

@@ -6,7 +6,7 @@ export const asignacionService = {
     const { data } = await api.get('/asignaciones');
     return data;
   },
-  create: async (asignacion: Omit<Asignacion, 'asignacionId' | 'vehiculo' | 'area' | 'conductor'>): Promise<Asignacion> => {
+  create: async (asignacion: Omit<Asignacion, 'asignacionId' | 'Vehiculo' | 'Area' | 'Conductor'>): Promise<Asignacion> => {
     const { data } = await api.post('/asignaciones', asignacion);
     return data;
   },

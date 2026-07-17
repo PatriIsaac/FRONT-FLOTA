@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Truck, CheckCircle, Wrench, Clock } from 'lucide-react';
 import { vehiculoService } from '../../../services/vehiculo.service';
-import type { Vehiculo } from '../../../types/vehiculo';
+import type { Vehiculo, EstadoVehiculo } from '../../../types/vehiculo';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { DataTable } from '../../../components/ui/DataTable';
 import { Badge } from '../../../components/ui/Badge';
@@ -12,26 +12,27 @@ export default function DisponibilidadList() {
     queryFn: vehiculoService.getAll
   });
 
-  const getStatusBadge = (estado: string) => {
+  const getStatusBadge = (estado: EstadoVehiculo) => {
     switch (estado) {
-      case 'Disponible':
-        return <Badge variant="success" className="flex items-center gap-1"><CheckCircle className="h-3 w-3" /> Disponible</Badge>;
-      case 'En Operacion':
-        return <Badge variant="info" className="flex items-center gap-1"><Truck className="h-3 w-3" /> En Operación</Badge>;
-      case 'En Mantenimiento':
+      case 'Operativo':
+        return <Badge variant="success" className="flex items-center gap-1"><CheckCircle className="h-3 w-3" /> Operativo</Badge>;
+      case 'Mantenimiento':
         return <Badge variant="danger" className="flex items-center gap-1"><Wrench className="h-3 w-3" /> En Mantenimiento</Badge>;
+      case 'Inactivo':
+        return <Badge variant="default" className="flex items-center gap-1"><Clock className="h-3 w-3" /> Inactivo</Badge>;
+      case 'DeBaja':
+        return <Badge variant="default" className="flex items-center gap-1"><Clock className="h-3 w-3" /> De Baja</Badge>;
       default:
-        return <Badge variant="default" className="flex items-center gap-1"><Clock className="h-3 w-3" /> {estado}</Badge>;
+        return <Badge variant="default">{estado}</Badge>;
     }
   };
 
   const columns = [
     { key: 'placa', header: 'Placa' },
-    { key: 'marca', header: 'Marca' },
-    { key: 'modelo', header: 'Modelo' },
-    { key: 'anio', header: 'Año' },
-    { 
-      key: 'estado', 
+    { key: 'codigoPatrimonio', header: 'Código Patrimonial' },
+    { key: 'categoria', header: 'Categoría', render: (v: Vehiculo) => v.CategoriaVehiculo?.nombre ?? '—' },
+    {
+      key: 'estado',
       header: 'Disponibilidad Actual',
       render: (v: Vehiculo) => getStatusBadge(v.estado)
     }
@@ -59,9 +60,9 @@ export default function DisponibilidadList() {
         <Card>
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">Disponibles</p>
+              <p className="text-sm font-medium text-gray-500">Operativos</p>
               <h3 className="text-2xl font-bold text-green-600">
-                {vehiculos.filter(v => v.estado === 'Disponible').length}
+                {vehiculos.filter(v => v.estado === 'Operativo').length}
               </h3>
             </div>
             <div className="bg-green-100 p-2 rounded-lg"><CheckCircle className="h-6 w-6 text-green-600" /></div>
@@ -70,30 +71,30 @@ export default function DisponibilidadList() {
         <Card>
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">En Operación</p>
-              <h3 className="text-2xl font-bold text-blue-600">
-                {vehiculos.filter(v => v.estado === 'En Operacion').length}
+              <p className="text-sm font-medium text-gray-500">En Mantenimiento</p>
+              <h3 className="text-2xl font-bold text-red-600">
+                {vehiculos.filter(v => v.estado === 'Mantenimiento').length}
               </h3>
             </div>
-            <div className="bg-blue-100 p-2 rounded-lg"><Truck className="h-6 w-6 text-blue-600" /></div>
+            <div className="bg-red-100 p-2 rounded-lg"><Wrench className="h-6 w-6 text-red-600" /></div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">En Mantenimiento</p>
-              <h3 className="text-2xl font-bold text-red-600">
-                {vehiculos.filter(v => v.estado === 'En Mantenimiento').length}
+              <p className="text-sm font-medium text-gray-500">Inactivos / De Baja</p>
+              <h3 className="text-2xl font-bold text-slate-600">
+                {vehiculos.filter(v => v.estado === 'Inactivo' || v.estado === 'DeBaja').length}
               </h3>
             </div>
-            <div className="bg-red-100 p-2 rounded-lg"><Wrench className="h-6 w-6 text-red-600" /></div>
+            <div className="bg-slate-100 p-2 rounded-lg"><Clock className="h-6 w-6 text-slate-600" /></div>
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardContent className="p-0">
-          <DataTable 
+          <DataTable
             columns={columns}
             data={vehiculos}
             isLoading={isLoading}

@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { movimientoService } from '../../../services/movimiento.service';
 import type { MovimientoDiario } from '../../../types/movimiento';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
+import { Input } from '../../../components/ui/Input';
 import { DataTable } from '../../../components/ui/DataTable';
 import { alerts } from '../../../utils/alerts';
 import MovimientoForm from './MovimientoForm';
@@ -12,12 +13,23 @@ import MovimientoForm from './MovimientoForm';
 export default function MovimientoList() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingMovimiento, setEditingMovimiento] = useState<MovimientoDiario | null>(null);
+  const [desde, setDesde] = useState('');
+  const [hasta, setHasta] = useState('');
   const queryClient = useQueryClient();
 
   const { data: movimientos = [], isLoading } = useQuery({
     queryKey: ['movimientos'],
     queryFn: movimientoService.getAll
   });
+
+  const movimientosFiltrados = useMemo(() => {
+    return movimientos.filter(m => {
+      const fecha = m.fecha.slice(0, 10);
+      if (desde && fecha < desde) return false;
+      if (hasta && fecha > hasta) return false;
+      return true;
+    });
+  }, [movimientos, desde, hasta]);
 
   const deleteMutation = useMutation({
     mutationFn: movimientoService.delete,
@@ -41,8 +53,8 @@ export default function MovimientoList() {
   const columns = [
     { key: 'movimientoId', header: 'ID' },
     { key: 'fecha', header: 'Fecha', render: (m: MovimientoDiario) => new Date(m.fecha).toLocaleDateString() },
-    { key: 'vehiculoId', header: 'Vehículo', render: (m: MovimientoDiario) => m.vehiculo?.placa || `ID: ${m.vehiculoId}` },
-    { key: 'conductorId', header: 'Conductor', render: (m: MovimientoDiario) => m.conductor?.nombre || `ID: ${m.conductorId}` },
+    { key: 'vehiculoId', header: 'Vehículo', render: (m: MovimientoDiario) => m.Vehiculo?.placa || `ID: ${m.vehiculoId}` },
+    { key: 'conductorId', header: 'Conductor', render: (m: MovimientoDiario) => m.Conductor?.nombre || `ID: ${m.conductorId}` },
     { key: 'destino', header: 'Destino' },
     { key: 'kmSalida', header: 'Km Salida' },
     { key: 'kmLlegada', header: 'Km Llegada' },
@@ -75,20 +87,26 @@ export default function MovimientoList() {
         </Button>
       </div>
 
+      <div className="flex gap-4 items-end max-w-md">
+        <Input label="Desde" type="date" value={desde} onChange={(e) => setDesde(e.target.value)} />
+        <Input label="Hasta" type="date" value={hasta} onChange={(e) => setHasta(e.target.value)} />
+      </div>
+
       <Card>
         <CardContent className="p-0">
-          <DataTable 
+          <DataTable
             columns={columns}
-            data={movimientos}
+            data={movimientosFiltrados}
             isLoading={isLoading}
             emptyMessage="No se encontraron movimientos."
+            pageSize={15}
           />
         </CardContent>
       </Card>
 
-      <MovimientoForm 
-        isOpen={isFormOpen} 
-        onClose={() => setIsFormOpen(false)} 
+      <MovimientoForm
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
         movimiento={editingMovimiento}
       />
     </div>

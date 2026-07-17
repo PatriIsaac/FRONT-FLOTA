@@ -2,19 +2,23 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Modal } from '../../components/ui/Modal';
 import { Input } from '../../components/ui/Input';
+import { Select } from '../../components/ui/Select';
 import { Button } from '../../components/ui/Button';
 import { mantenimientoService } from '../../services/mantenimiento.service';
+import { vehiculoService } from '../../services/vehiculo.service';
+import { tipoMantenimientoService } from '../../services/tipoMantenimiento.service';
+import { tallerService } from '../../services/taller.service';
 import type { OrdenServicio } from '../../types/mantenimiento';
 import { alerts } from '../../utils/alerts';
 
 const ordenSchema = z.object({
   numero: z.string().min(1, 'Número requerido'),
-  vehiculoId: z.coerce.number().min(1, 'Vehículo requerido'),
-  tipoId: z.coerce.number().min(1, 'Tipo requerido'),
-  taller: z.string().min(1, 'Taller requerido'),
+  vehiculoId: z.coerce.number().min(1, 'Seleccione un vehículo'),
+  tipoId: z.coerce.number().min(1, 'Seleccione un tipo de mantenimiento'),
+  tallerId: z.coerce.number().min(1, 'Seleccione un taller'),
   fechaEntrada: z.string().min(1, 'Fecha requerida'),
   fechaSalida: z.string().optional(),
   kilometraje: z.coerce.number().min(0, 'Kilometraje requerido'),
@@ -30,7 +34,10 @@ interface Props {
 
 export default function OrdenForm({ isOpen, onClose, orden }: Props) {
   const queryClient = useQueryClient();
-  
+  const { data: vehiculos = [] } = useQuery({ queryKey: ['vehiculos'], queryFn: vehiculoService.getAll });
+  const { data: tipos = [] } = useQuery({ queryKey: ['tiposMantenimiento'], queryFn: tipoMantenimientoService.getAll });
+  const { data: talleres = [] } = useQuery({ queryKey: ['talleres'], queryFn: tallerService.getAll });
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm<OrdenFormData>({
     resolver: zodResolver(ordenSchema),
   });
@@ -41,7 +48,7 @@ export default function OrdenForm({ isOpen, onClose, orden }: Props) {
         numero: orden.numero,
         vehiculoId: orden.vehiculoId,
         tipoId: orden.tipoId,
-        taller: orden.taller,
+        tallerId: orden.tallerId,
         fechaEntrada: orden.fechaEntrada,
         fechaSalida: orden.fechaSalida || '',
         kilometraje: orden.kilometraje,
@@ -49,9 +56,9 @@ export default function OrdenForm({ isOpen, onClose, orden }: Props) {
     } else {
       reset({
         numero: '',
-        vehiculoId: 1,
-        tipoId: 1,
-        taller: 'Taller Interno',
+        vehiculoId: 0,
+        tipoId: 0,
+        tallerId: 0,
         fechaEntrada: new Date().toISOString().split('T')[0],
         fechaSalida: '',
         kilometraje: 0,
@@ -60,7 +67,7 @@ export default function OrdenForm({ isOpen, onClose, orden }: Props) {
   }, [orden, reset, isOpen]);
 
   const mutation = useMutation({
-    mutationFn: (data: OrdenFormData) => 
+    mutationFn: (data: OrdenFormData) =>
       orden ? mantenimientoService.update(orden.ordenId, data) : mantenimientoService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mantenimientos'] });
@@ -81,12 +88,36 @@ export default function OrdenForm({ isOpen, onClose, orden }: Props) {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-2 gap-6">
           <Input label="Número" {...register('numero')} error={errors.numero?.message} />
-          <Input label="Taller" {...register('taller')} error={errors.taller?.message} />
+          <Select
+            label="Taller"
+            {...register('tallerId')}
+            error={errors.tallerId?.message}
+            options={[
+              { value: 0, label: 'Seleccione un taller...' },
+              ...talleres.map(t => ({ value: t.tallerId, label: t.nombre })),
+            ]}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-6">
-          <Input label="ID Vehículo" type="number" {...register('vehiculoId')} error={errors.vehiculoId?.message} />
-          <Input label="ID Tipo" type="number" {...register('tipoId')} error={errors.tipoId?.message} />
+          <Select
+            label="Vehículo"
+            {...register('vehiculoId')}
+            error={errors.vehiculoId?.message}
+            options={[
+              { value: 0, label: 'Seleccione un vehículo...' },
+              ...vehiculos.map(v => ({ value: v.vehiculoId, label: `${v.placa} - ${v.codigoPatrimonio}` })),
+            ]}
+          />
+          <Select
+            label="Tipo de Mantenimiento"
+            {...register('tipoId')}
+            error={errors.tipoId?.message}
+            options={[
+              { value: 0, label: 'Seleccione un tipo...' },
+              ...tipos.map(t => ({ value: t.tipoId, label: t.descripcion })),
+            ]}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-6">

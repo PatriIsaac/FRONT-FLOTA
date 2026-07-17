@@ -1,23 +1,28 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { Fuel, Plus, Trash2 } from 'lucide-react';
+import { Fuel, Plus, Trash2, Edit2 } from 'lucide-react';
 import { servicentroService } from '../../../services/servicentro.service';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 import { DataTable } from '../../../components/ui/DataTable';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { alerts } from '../../../utils/alerts';
+import ServicentroForm from './ServicentroForm';
+import type { Servicentro } from '../../../types/servicentro';
 
 export default function ServicentrosList() {
   const queryClient = useQueryClient();
   const { data: servicentros = [], isLoading } = useQuery({ queryKey: ['servicentros'], queryFn: servicentroService.getAll });
   const { register, handleSubmit, reset } = useForm();
+  const [editando, setEditando] = useState<Servicentro | null>(null);
+  const [modalAbierto, setModalAbierto] = useState(false);
 
   const createMut = useMutation({
     mutationFn: servicentroService.create,
     onSuccess: () => { queryClient.invalidateQueries({queryKey:['servicentros']}); alerts.success('Grifo registrado'); reset(); }
   });
-  
+
   const deleteMut = useMutation({
     mutationFn: servicentroService.delete,
     onSuccess: () => { queryClient.invalidateQueries({queryKey:['servicentros']}); alerts.success('Grifo eliminado'); }
@@ -29,7 +34,16 @@ export default function ServicentrosList() {
     { key: 'ruc', header: 'RUC' },
     { key: 'telefono', header: 'Teléfono' },
     { key: 'direccion', header: 'Dirección' },
-    { key: 'acciones', header: 'Acciones', render: (d: any) => <Button variant="ghost" size="sm" onClick={() => deleteMut.mutate(d.servicentroId)}><Trash2 className="w-4 h-4 text-red-500"/></Button> }
+    {
+      key: 'acciones', header: 'Acciones', render: (d: any) => (
+        <div className="flex gap-2">
+          <Button variant="ghost" size="sm" onClick={() => { setEditando(d); setModalAbierto(true); }}>
+            <Edit2 className="w-4 h-4 text-indigo-600" />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => deleteMut.mutate(d.servicentroId)}><Trash2 className="w-4 h-4 text-red-500"/></Button>
+        </div>
+      )
+    }
   ];
 
   return (
@@ -42,7 +56,7 @@ export default function ServicentrosList() {
         <Card className="lg:col-span-1 h-fit">
           <CardHeader><CardTitle>Nuevo Grifo</CardTitle></CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit((d: any) => createMut.mutate(d))} className="space-y-4">
+            <form onSubmit={handleSubmit((d: any) => createMut.mutate(d))} className="space-y-5">
               <Input label="Razón Social" {...register('nombre', {required: true})} />
               <Input label="RUC" {...register('ruc', {required: true})} />
               <Input label="Teléfono" {...register('telefono')} />
@@ -57,6 +71,11 @@ export default function ServicentrosList() {
           </CardContent>
         </Card>
       </div>
+      <ServicentroForm
+        isOpen={modalAbierto}
+        onClose={() => { setModalAbierto(false); setEditando(null); }}
+        servicentro={editando}
+      />
     </div>
   );
 }

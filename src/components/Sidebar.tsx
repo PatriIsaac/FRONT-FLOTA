@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { NAV_SECTIONS } from '../data/navigation';
 import { useAuth } from '../hooks/useAuth';
+import logoIcon from '../assets/logo-icon.png';
 
-// ponytail: backend sends role slugs ('admin', 'analista_costos'); allowedRoles use display names. Map here. Add a row per new role.
+// El backend envía el rol como slug ('admin', 'analista_costos'); allowedRoles usa nombres de
+// visualización. Este mapa traduce uno al otro; agregar una fila por cada rol nuevo.
 const ROLE_MAP: Record<string, string> = {
   admin: 'Administrador',
   administrador: 'Administrador',
@@ -45,12 +47,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Logo */}
       <div className="sidebar-logo">
         <div className="sidebar-logo-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="1" y="3" width="15" height="13" rx="2"/>
-            <path d="M16 8h4l3 5v3h-7V8z"/>
-            <circle cx="5.5" cy="18.5" r="2.5"/>
-            <circle cx="18.5" cy="18.5" r="2.5"/>
-          </svg>
+          <img src={logoIcon} alt="SAFV" width={24} height={24} />
         </div>
         <div className="sidebar-logo-text">
           <div className="sidebar-logo-title">SAFV</div>
@@ -103,9 +100,9 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
               >
                 <div
                   className="sidebar-section-icon"
-                  style={{ background: `${section.color}22` }}
+                  style={{ background: `${section.color}22`, color: section.color }}
                 >
-                  <span style={{ fontSize: '15px' }}>{section.icon}</span>
+                  <section.icon size={15} />
                 </div>
                 <span className="sidebar-section-label">{section.label}</span>
                 <svg
@@ -136,9 +133,6 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     <div className="sidebar-item-dot" />
                     <div style={{ flex: 1 }}>
                       <div className="sidebar-item-text">{item.label}</div>
-                      {item.code && (
-                        <div className="sidebar-item-code">{item.code}</div>
-                      )}
                     </div>
                   </NavLink>
                 ))}
