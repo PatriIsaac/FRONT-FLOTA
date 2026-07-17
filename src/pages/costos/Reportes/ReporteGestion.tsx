@@ -1,137 +1,231 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Printer, TrendingUp, DollarSign, Activity } from 'lucide-react';
+import { FileText, Download, Eye, TrendingUp, DollarSign, Activity, AlertCircle } from 'lucide-react';
 import { vehiculoService } from '../../../services/vehiculo.service';
 import { costosService } from '../../../services/costos.service';
+import { reporteService } from '../../../services/reporte.service';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
+import { alerts } from '../../../utils/alerts';
 
 export default function ReporteGestion() {
+  const mesActual = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+  const [mesAnio, setMesAnio] = useState(mesActual);
+  const [generando, setGenerando] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   const { data: vehiculos = [] } = useQuery({ queryKey: ['vehiculos'], queryFn: vehiculoService.getAll });
   const { data: costosFijos = [] } = useQuery({ queryKey: ['costosFijos'], queryFn: costosService.getAllFijos });
   const { data: costosOp = [] } = useQuery({ queryKey: ['costosOperacion'], queryFn: costosService.getAllOperacion });
 
-  const handlePrint = () => {
-    window.print();
+  const totalFijo = costosFijos.reduce((sum: number, item: any) => sum + parseFloat(item.cfp || 0) + parseFloat(item.cfv || 0), 0);
+  const totalVar = costosOp.reduce((sum: number, item: any) => sum + parseFloat(item.cvv || 0), 0);
+  const totalCosto = totalFijo + totalVar;
+
+  // Liberar la URL anterior si existe
+  const limpiarPreview = useCallback(() => {
+    if (pdfUrl) {
+      window.URL.revokeObjectURL(pdfUrl);
+      setPdfUrl(null);
+    }
+  }, [pdfUrl]);
+
+  const obtenerMensajeError = async (err: any) => {
+    if (err.response?.data instanceof Blob) {
+      try {
+        const texto = await err.response.data.text();
+        const json = JSON.parse(texto);
+        return json.error || 'Error de servidor.';
+      } catch (e) {
+        return 'Error de servidor.';
+      }
+    }
+    return err.response?.data?.error || 'Error de conexión.';
   };
 
-  // Resumen simulado
-  const totalFijo = costosFijos.reduce((sum: number, item: any) => sum + parseFloat(item.cfp) + parseFloat(item.cfv), 0);
-  const totalVar = costosOp.reduce((sum: number, item: any) => sum + parseFloat(item.cvv), 0);
-  const totalCosto = totalFijo + totalVar;
+  const handleDescargar = async () => {
+    setError(null);
+    setGenerando(true);
+    try {
+      await reporteService.descargarCostoOperacional(mesAnio);
+      alerts.success(`Reporte ${mesAnio} descargado`);
+    } catch (err: any) {
+      const mensaje = await obtenerMensajeError(err);
+      setError(mensaje);
+    } finally {
+      setGenerando(false);
+    }
+  };
+
+  const handlePrevisualizar = async () => {
+    setError(null);
+    limpiarPreview();
+    setPreviewing(true);
+    try {
+      const url = await reporteService.previsualizarCostoOperacional(mesAnio);
+      setPdfUrl(url);
+    } catch (err: any) {
+      const mensaje = await obtenerMensajeError(err);
+      setError(mensaje);
+    } finally {
+      setPreviewing(false);
+    }
+  };
+
+  const formatMes = (m: string) => {
+    const [anio, mes] = m.split('-');
+    const fecha = new Date(parseInt(anio), parseInt(mes) - 1);
+    return fecha.toLocaleDateString('es-PE', { month: 'long', year: 'numeric' });
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in">
-      <div className="flex justify-between items-center hide-print">
+      {/* Encabezado */}
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Reportes de Gestión</h1>
-          <p className="text-sm text-gray-500">Control Mensual del Costo Operacional (MA 122 03 01).</p>
+          <h1 className="text-2xl font-bold text-[color:var(--text-primary)]">Reportes de Gestión</h1>
+          <p className="text-sm text-[color:var(--text-secondary)]">
+            Control Mensual del Costo Operacional de Vehículo — MA 122 03 01
+          </p>
         </div>
-        <Button onClick={handlePrint} className="bg-emerald-600 hover:bg-emerald-700">
-          <Printer className="w-4 h-4 mr-2" /> Imprimir Reporte
-        </Button>
-      </div>
-
-      <div className="print-area">
-        <div className="bg-white p-8 border border-gray-200 shadow-sm print:border-none print:shadow-none min-h-[1122px] w-full max-w-[800px] mx-auto">
-          
-          <div className="border-b-2 border-emerald-600 pb-4 mb-8 flex justify-between items-end">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 uppercase">Control Mensual del Costo Operacional</h2>
-              <p className="text-gray-500 text-sm mt-1">Formato: MA 122 03 01</p>
-            </div>
-            <div className="text-right">
-              <p className="font-bold text-gray-900">Periodo Actual</p>
-              <p className="text-gray-500">{new Date().toLocaleDateString('es-PE', { month: 'long', year: 'numeric' })}</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-6 mb-8">
-            <Card className="bg-gray-50 border-none shadow-none">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-blue-100 p-3 rounded-full mr-4"><TrendingUp className="h-6 w-6 text-blue-600" /></div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-bold">Total Flota</p>
-                  <p className="text-2xl font-bold text-gray-900">{vehiculos.length} Und.</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gray-50 border-none shadow-none">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-emerald-100 p-3 rounded-full mr-4"><DollarSign className="h-6 w-6 text-emerald-600" /></div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-bold">Costos Fijos</p>
-                  <p className="text-xl font-bold text-gray-900">S/. {totalFijo.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gray-50 border-none shadow-none">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-red-100 p-3 rounded-full mr-4"><Activity className="h-6 w-6 text-red-600" /></div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-bold">Costos Variables</p>
-                  <p className="text-xl font-bold text-gray-900">S/. {totalVar.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="mb-8">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Resumen Operacional General</h3>
-            <div className="bg-gray-50 p-6 rounded-lg text-center">
-              <p className="text-gray-500 uppercase font-bold text-sm mb-2">Costo Total de Operación</p>
-              <p className="text-4xl font-black text-emerald-700">S/. {totalCosto.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Top 5 Vehículos de Mayor Costo (Simulación)</h3>
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="p-2 text-xs text-gray-600 font-bold uppercase border">Vehículo</th>
-                  <th className="p-2 text-xs text-gray-600 font-bold uppercase border">Costo Variable</th>
-                  <th className="p-2 text-xs text-gray-600 font-bold uppercase border">Costo Fijo</th>
-                  <th className="p-2 text-xs text-gray-600 font-bold uppercase border">Total S/.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {vehiculos.slice(0, 5).map((v: any, i: number) => (
-                  <tr key={i} className="border-b">
-                    <td className="p-2 border">{v.placa}</td>
-                    <td className="p-2 border">S/. 1,250.00</td>
-                    <td className="p-2 border">S/. 400.00</td>
-                    <td className="p-2 border font-bold">S/. 1,650.00</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="mt-24 pt-12 border-t border-gray-300 grid grid-cols-2 gap-12 text-center">
-            <div>
-              <div className="border-b border-gray-800 w-48 mx-auto mb-2"></div>
-              <span className="text-xs font-bold uppercase text-gray-600">Jefatura de Operaciones</span>
-            </div>
-            <div>
-              <div className="border-b border-gray-800 w-48 mx-auto mb-2"></div>
-              <span className="text-xs font-bold uppercase text-gray-600">Gerencia General</span>
-            </div>
-          </div>
-
+        <div className="bg-red-100 p-2 rounded-full">
+          <FileText className="h-6 w-6 text-red-600" />
         </div>
       </div>
 
-      <style>{`
-        @media print {
-          body * { visibility: hidden; }
-          .hide-print { display: none !important; }
-          .print-area, .print-area * { visibility: visible; }
-          .print-area { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
-        }
-      `}</style>
+      {/* Tarjetas de resumen */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="bg-blue-100 p-3 rounded-full shrink-0">
+              <TrendingUp className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-xs text-[color:var(--text-secondary)] uppercase font-bold">Total Flota</p>
+              <p className="text-xl font-bold text-[color:var(--text-primary)]">{vehiculos.length} Und.</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="bg-emerald-100 p-3 rounded-full shrink-0">
+              <DollarSign className="h-5 w-5 text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-xs text-[color:var(--text-secondary)] uppercase font-bold">Costos Fijos</p>
+              <p className="text-xl font-bold text-[color:var(--text-primary)]">
+                S/. {totalFijo.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className="bg-red-100 p-3 rounded-full shrink-0">
+              <Activity className="h-5 w-5 text-red-600" />
+            </div>
+            <div>
+              <p className="text-xs text-[color:var(--text-secondary)] uppercase font-bold">Costos Variables</p>
+              <p className="text-xl font-bold text-[color:var(--text-primary)]">
+                S/. {totalVar.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Panel de generación BIRT */}
+      <Card>
+        <CardContent className="p-6">
+          <h3 className="font-semibold text-[color:var(--text-primary)] mb-1">
+            Generar Reporte PDF (BIRT)
+          </h3>
+          <p className="text-sm text-[color:var(--text-secondary)] mb-4">
+            Seleccione el periodo y genere el formulario oficial MA 122 03 01 como PDF.
+            Requiere que el servicio BIRT (ReportesBIRT) esté compilado y que existan datos
+            de costos calculados para el mes seleccionado.
+          </p>
+
+          <div className="flex flex-wrap items-end gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[color:var(--text-primary)] mb-1">
+                Periodo (Mes/Año)
+              </label>
+              <input
+                type="month"
+                value={mesAnio}
+                onChange={e => {
+                  setMesAnio(e.target.value);
+                  setError(null);
+                  limpiarPreview();
+                }}
+                className="h-10 px-3 rounded-md border border-[var(--border-color)] bg-[var(--input-bg)] text-[color:var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            <Button
+              onClick={handleDescargar}
+              isLoading={generando}
+              disabled={generando || previewing}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Descargar PDF
+            </Button>
+
+            <Button
+              onClick={handlePrevisualizar}
+              isLoading={previewing}
+              disabled={generando || previewing}
+              variant="outline"
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              Vista previa
+            </Button>
+          </div>
+
+          {/* Mensaje de error */}
+          {error && (
+            <div className="mt-4 flex items-start gap-3 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">
+              <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Periodo seleccionado */}
+          <p className="mt-3 text-xs text-[color:var(--text-secondary)]">
+            Periodo seleccionado: <span className="font-semibold capitalize">{formatMes(mesAnio)}</span>
+            {' · '}Costo total de operación acumulado:
+            <span className="font-semibold"> S/. {totalCosto.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Vista previa del PDF */}
+      {pdfUrl && (
+        <Card>
+          <CardContent className="p-0 overflow-hidden rounded-md">
+            <div className="flex items-center justify-between px-4 py-2 bg-[var(--input-bg)] border-b border-[var(--border-color)]">
+              <span className="text-sm font-medium text-[color:var(--text-primary)]">
+                Vista previa — costo-operacional-{mesAnio}.pdf
+              </span>
+              <Button variant="ghost" size="sm" onClick={limpiarPreview}>
+                Cerrar
+              </Button>
+            </div>
+            <iframe
+              src={pdfUrl}
+              title="Vista previa del reporte de costo operacional"
+              className="w-full border-0"
+              style={{ height: '75vh' }}
+            />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
