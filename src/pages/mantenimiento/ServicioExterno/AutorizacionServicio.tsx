@@ -52,11 +52,11 @@ export default function AutorizacionServicio() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center hide-print">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Autorizar Servicio Externo</h1>
-          <p className="text-sm text-gray-500">Autorización de servicio para mantenimiento en taller de terceros (MA 122 02 02).</p>
+          <p className="text-sm text-gray-500">Autorización de servicio para mantenimiento en taller de terceros.</p>
         </div>
         <div className="bg-emerald-100 p-2 rounded-full">
           <PenTool className="h-6 w-6 text-emerald-600" />
@@ -66,7 +66,7 @@ export default function AutorizacionServicio() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="hide-print">
           <CardContent className="p-6">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
               <Select 
                 label="Vehículo" 
                 {...register('vehiculoId')} 
@@ -114,7 +114,7 @@ export default function AutorizacionServicio() {
                 <h2 className="text-xl font-bold uppercase tracking-wider">Autorización de Servicio Externo</h2>
                 <p className="text-emerald-100 print:text-gray-300">N° {autorizacion.numeroAutorizacion}</p>
               </div>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-6 flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-500 block text-xs uppercase">Fecha de Emisión</span>

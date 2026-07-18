@@ -11,16 +11,41 @@ import { alerts } from '../../../utils/alerts';
 import MovimientoForm from './MovimientoForm';
 
 export default function MovimientoList() {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0]; // "YYYY-MM-DD"
+  const firstDayStr = `${todayStr.slice(0, 7)}-01`; // "YYYY-MM-01"
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingMovimiento, setEditingMovimiento] = useState<MovimientoDiario | null>(null);
-  const [desde, setDesde] = useState('');
-  const [hasta, setHasta] = useState('');
+  const [desde, setDesde] = useState(firstDayStr);
+  const [hasta, setHasta] = useState(todayStr);
   const queryClient = useQueryClient();
 
   const { data: movimientos = [], isLoading } = useQuery({
     queryKey: ['movimientos'],
     queryFn: movimientoService.getAll
   });
+
+  const [isUpdating, setIsUpdating] = useState(false);
+  const handleUpdateDates = async () => {
+    if (!confirm('¿Deseas actualizar todas las fechas a Julio de 2026?')) return;
+    setIsUpdating(true);
+    try {
+      let count = 0;
+      for (const m of movimientos) {
+        const day = Math.floor(Math.random() * 18) + 1;
+        const dayStr = String(day).padStart(2, '0');
+        await movimientoService.update(m.movimientoId, { fecha: `2026-07-${dayStr}T10:00:00Z` } as any);
+        count++;
+      }
+      alerts.success(`Se actualizaron ${count} fechas a Julio de 2026.`);
+      queryClient.invalidateQueries({ queryKey: ['movimientos'] });
+    } catch (e) {
+      alerts.error('Error al actualizar fechas');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const movimientosFiltrados = useMemo(() => {
     return movimientos.filter(m => {
@@ -76,15 +101,20 @@ export default function MovimientoList() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Movimiento Diario</h1>
           <p className="text-sm text-gray-500">Registro de salidas y llegadas</p>
         </div>
-        <Button onClick={() => { setEditingMovimiento(null); setIsFormOpen(true); }}>
-          <Plus className="h-4 w-4 mr-2" /> Nuevo Movimiento
-        </Button>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={handleUpdateDates} isLoading={isUpdating}>
+            Fijar Fechas a Julio 2026
+          </Button>
+          <Button onClick={() => { setEditingMovimiento(null); setIsFormOpen(true); }}>
+            <Plus className="h-4 w-4 mr-2" /> Nuevo Movimiento
+          </Button>
+        </div>
       </div>
 
       <div className="flex gap-4 items-end max-w-md">
@@ -93,13 +123,14 @@ export default function MovimientoList() {
       </div>
 
       <Card>
-        <CardContent className="p-0">
+        <CardContent>
           <DataTable
             columns={columns}
             data={movimientosFiltrados}
             isLoading={isLoading}
             emptyMessage="No se encontraron movimientos."
             pageSize={15}
+            enableColumnFilters={true}
           />
         </CardContent>
       </Card>

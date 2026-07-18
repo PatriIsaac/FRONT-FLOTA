@@ -28,6 +28,12 @@ export default function ServicentrosList() {
     onSuccess: () => { queryClient.invalidateQueries({queryKey:['servicentros']}); alerts.success('Grifo eliminado'); }
   });
 
+  const handleDelete = async (d: any) => {
+    if (await alerts.delete(`el grifo ${d.nombre}`)) {
+      deleteMut.mutate(d.servicentroId);
+    }
+  };
+
   const columns = [
     { key: 'servicentroId', header: 'ID' },
     { key: 'nombre', header: 'Razón Social' },
@@ -40,14 +46,14 @@ export default function ServicentrosList() {
           <Button variant="ghost" size="sm" onClick={() => { setEditando(d); setModalAbierto(true); }}>
             <Edit2 className="w-4 h-4 text-indigo-600" />
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => deleteMut.mutate(d.servicentroId)}><Trash2 className="w-4 h-4 text-red-500"/></Button>
+          <Button variant="ghost" size="sm" onClick={() => handleDelete(d)}><Trash2 className="w-4 h-4 text-red-500"/></Button>
         </div>
       )
     }
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
         <div><h1 className="text-2xl font-bold text-gray-900">Grifos / Servicentros</h1><p className="text-sm text-gray-500">Proveedores de combustible.</p></div>
         <div className="bg-slate-100 p-2 rounded-full"><Fuel className="h-6 w-6 text-slate-600" /></div>
@@ -56,7 +62,7 @@ export default function ServicentrosList() {
         <Card className="lg:col-span-1 h-fit">
           <CardHeader><CardTitle>Nuevo Grifo</CardTitle></CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit((d: any) => createMut.mutate(d))} className="space-y-5">
+            <form onSubmit={handleSubmit((d: any) => createMut.mutate(d))} className="flex flex-col gap-5">
               <Input label="Razón Social" {...register('nombre', {required: true})} />
               <Input label="RUC" {...register('ruc', {required: true})} />
               <Input label="Teléfono" {...register('telefono')} />
@@ -66,8 +72,8 @@ export default function ServicentrosList() {
           </CardContent>
         </Card>
         <Card className="lg:col-span-2">
-          <CardContent className="p-0">
-            <DataTable columns={columns} data={servicentros} isLoading={isLoading} emptyMessage="No hay grifos." />
+          <CardContent>
+            <DataTable columns={columns} data={servicentros} isLoading={isLoading} emptyMessage="No hay grifos." enableColumnFilters={true} />
           </CardContent>
         </Card>
       </div>

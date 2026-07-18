@@ -85,7 +85,7 @@ export default function GenericPage({ title, code, description, section, section
             <span className="gp-count-badge">0 registros</span>
           </div>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent>
           <DataTable
             columns={columns}
             data={[]}

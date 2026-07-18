@@ -102,13 +102,14 @@ export default function ConductoresList() {
       </div>
 
       <Card>
-        <CardContent className="p-0">
+        <CardContent>
           <DataTable
             columns={columns}
             data={conductoresFiltrados}
             isLoading={isLoadingConductores}
             emptyMessage="No se encontraron conductores registrados."
             pageSize={10}
+            enableColumnFilters={true}
           />
         </CardContent>
       </Card>

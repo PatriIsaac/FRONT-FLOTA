@@ -42,8 +42,8 @@ export default function TotalizarConsumo() {
       if (!agrupado[a.vehiculoId]) {
         agrupado[a.vehiculoId] = { vehiculo: a.Vehiculo, vehiculoId: a.vehiculoId, totalGalones: 0, totalCosto: 0, cantidadVeces: 0 };
       }
-      const gal = a.galones || 0;
-      const costo = a.costo || 0;
+      const gal = Number(a.galones || 0);
+      const costo = Number(a.costo || 0);
       
       agrupado[a.vehiculoId].totalGalones += gal;
       agrupado[a.vehiculoId].totalCosto += costo;
@@ -70,12 +70,12 @@ export default function TotalizarConsumo() {
     { 
       key: 'totalGalones', 
       header: 'Total Galones',
-      render: (d: any) => <span className="font-medium text-blue-600">{d.totalGalones.toFixed(2)} gal.</span>
+      render: (d: any) => <span className="font-medium text-blue-600">{Number(d.totalGalones).toFixed(2)} gal.</span>
     },
     { 
       key: 'totalCosto', 
       header: 'Costo Total (S/.)',
-      render: (d: any) => <span className="font-bold text-gray-900">S/. {d.totalCosto.toFixed(2)}</span>
+      render: (d: any) => <span className="font-bold text-gray-900">S/. {Number(d.totalCosto).toFixed(2)}</span>
     }
   ];
 

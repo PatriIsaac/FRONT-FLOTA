@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Users, FileText, AlertTriangle, Upload, CheckCircle } from 'lucide-react';
+import { Users, FileText, AlertTriangle, Upload, CheckCircle, Trash2 } from 'lucide-react';
 import { conductorService } from '../../../services/conductor.service';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { DataTable } from '../../../components/ui/DataTable';
@@ -18,16 +18,30 @@ export default function DocumentacionPersonal() {
   });
 
   const saveDocMut = useMutation({
-    mutationFn: async (payload: { conductorId: number, tipo: string, vigencia: string }) => {
-      const { data } = await api.post(`/conductores/${payload.conductorId}/documentos`, {
-        tipo: payload.tipo,
-        vigencia: new Date(payload.vigencia).toISOString()
-      });
+    mutationFn: async (formData: any) => {
+      const { administrativaService } = await import('../../../services/administrativa.service');
+      const data = await administrativaService.createDocumento(formData);
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['conductores'] });
-      alerts.success('Documento actualizado correctamente en BD');
+      alerts.success('Documento guardado correctamente');
+    },
+    onError: (err: any) => {
+      const msg = err.response?.data?.error || err.message || 'Error al guardar';
+      alerts.error(msg);
+      console.error("Detalle del error:", err.response || err);
+    }
+  });
+
+  const deleteDocMut = useMutation({
+    mutationFn: async (id: number) => {
+      const { administrativaService } = await import('../../../services/administrativa.service');
+      await administrativaService.deleteDocumento(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conductores'] });
+      alerts.success('Documento eliminado');
     }
   });
 
@@ -90,31 +104,79 @@ export default function DocumentacionPersonal() {
     const DocItem = ({ tipo, titulo }: { tipo: string, titulo: string }) => {
       const doc = findDoc(conductor.documentos, tipo);
       const estado = checkVigencia(doc?.vigencia);
+      
+      const handleSave = () => {
+        const dateInput = document.getElementById(`date-${tipo}`) as HTMLInputElement;
+        const fileInput = document.getElementById(`file-${tipo}`) as HTMLInputElement;
+        if (!dateInput.value) {
+            return alerts.error('Debe ingresar la fecha de vencimiento');
+        }
+        
+        const formData = new FormData();
+        formData.append('conductorId', cid.toString());
+        formData.append('tipo', tipo);
+        formData.append('vigencia', dateInput.value);
+        formData.append('fechaSubida', new Date().toISOString());
+        
+        if (fileInput.files && fileInput.files.length > 0) {
+            formData.append('archivo', fileInput.files[0]);
+        }
+        
+        saveDocMut.mutate(formData);
+      };
+
       return (
-        <div className="flex items-center justify-between p-4 border rounded-lg mb-4">
-          <div className="flex items-center">
+        <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between p-5 border border-gray-700/50 rounded-xl mb-4 gap-6 bg-gray-800/20 hover:bg-gray-800/40 transition-colors">
+          <div className="flex items-center min-w-[220px]">
             {estado === 'VIGENTE' ? (
-              <CheckCircle className="h-8 w-8 text-emerald-500 mr-4" />
+              <CheckCircle className="h-8 w-8 text-emerald-500 mr-4 shrink-0" />
             ) : estado === 'POR_VENCER' ? (
-              <AlertTriangle className="h-8 w-8 text-amber-500 mr-4" />
+              <AlertTriangle className="h-8 w-8 text-amber-500 mr-4 shrink-0" />
             ) : (
-              <FileText className="h-8 w-8 text-red-500 mr-4" />
+              <FileText className="h-8 w-8 text-red-500 mr-4 shrink-0" />
             )}
             <div>
-              <h4 className="font-bold text-gray-900">{titulo}</h4>
-              <p className="text-sm text-gray-500">
+              <h4 className="font-bold text-gray-100 text-sm md:text-base">{titulo}</h4>
+              <p className="text-xs md:text-sm text-gray-400 mt-1">
                 {doc ? `Vence: ${new Date(doc.vigencia).toLocaleDateString()}` : 'Documento no cargado'}
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <input 
-              type="date" 
-              className="border rounded px-2 py-1 text-sm"
-              onChange={(e) => {
-                if(e.target.value) saveDocMut.mutate({ conductorId: cid, tipo, vigencia: e.target.value });
-              }}
-            />
+          <div className="flex flex-wrap gap-4 items-end flex-1 justify-end w-full xl:w-auto">
+            {doc?.archivoUrl && (
+              <div className="flex items-center gap-2 mb-2 xl:mb-0 mr-4">
+                <a href={`http://localhost:3000${doc.archivoUrl}`} target="_blank" rel="noreferrer" className="text-sm font-medium text-blue-400 hover:text-blue-300 hover:underline flex items-center px-2 py-1 rounded bg-blue-500/10">
+                  <FileText className="w-4 h-4 mr-2" /> Ver PDF
+                </a>
+                <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 w-8 p-0" onClick={() => deleteDocMut.mutate(doc.documentoId)} title="Eliminar Documento">
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+                <div className="h-6 w-px bg-gray-700 mx-2 hidden xl:block"></div>
+              </div>
+            )}
+            
+            <div className="flex flex-col gap-2">
+              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Vencimiento</span>
+              <input 
+                type="date" 
+                id={`date-${tipo}`}
+                className="border border-gray-600 bg-gray-800/50 rounded-lg px-3 py-2 text-sm h-10 w-full sm:w-40 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+            </div>
+            <div className="flex flex-col gap-2 flex-1 min-w-[200px] max-w-[300px]">
+              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Archivo PDF (Opcional)</span>
+              <input 
+                type="file" 
+                id={`file-${tipo}`}
+                accept=".pdf"
+                className="border border-gray-600 bg-gray-800/50 rounded-lg px-2 py-1.5 text-sm h-10 w-full text-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-500/20 file:text-blue-400 cursor-pointer"
+              />
+            </div>
+            <div className="flex items-end">
+              <Button size="sm" onClick={handleSave} isLoading={saveDocMut.isPending} className="h-10 px-5 font-semibold">
+                <Upload className="w-4 h-4 mr-2" /> Subir
+              </Button>
+            </div>
           </div>
         </div>
       );
@@ -131,7 +193,7 @@ export default function DocumentacionPersonal() {
             <Button variant="ghost" onClick={() => setSelectedConductor(null)}>Cerrar</Button>
           </div>
           
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <DocItem tipo="LICENCIA" titulo="Licencia de Conducir (Brevete)" />
             <DocItem tipo="DNI" titulo="Documento de Identidad (DNI)" />
             <DocItem tipo="EXAMEN_MEDICO" titulo="Examen Médico Ocupacional" />
@@ -143,7 +205,7 @@ export default function DocumentacionPersonal() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Documentación de Personal</h1>
@@ -157,7 +219,7 @@ export default function DocumentacionPersonal() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className={selectedConductor ? "lg:col-span-1" : "lg:col-span-3"}>
           <Card className="h-full">
-            <CardContent className="p-0">
+            <CardContent>
               <DataTable 
                 columns={columns}
                 data={conductores}

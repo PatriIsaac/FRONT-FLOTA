@@ -28,6 +28,12 @@ export default function AreasList() {
     onSuccess: () => { queryClient.invalidateQueries({queryKey:['areas']}); alerts.success('Área eliminada'); }
   });
 
+  const handleDelete = async (d: any) => {
+    if (await alerts.delete(`el área ${d.nombre}`)) {
+      deleteMut.mutate(d.areaId);
+    }
+  };
+
   const columns = [
     { key: 'areaId', header: 'ID' },
     { key: 'nombre', header: 'Nombre del Área' },
@@ -37,14 +43,14 @@ export default function AreasList() {
           <Button variant="ghost" size="sm" onClick={() => { setEditando(d); setModalAbierto(true); }}>
             <Edit2 className="w-4 h-4 text-indigo-600" />
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => deleteMut.mutate(d.areaId)}><Trash2 className="w-4 h-4 text-red-500"/></Button>
+          <Button variant="ghost" size="sm" onClick={() => handleDelete(d)}><Trash2 className="w-4 h-4 text-red-500"/></Button>
         </div>
       )
     }
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
         <div><h1 className="text-2xl font-bold text-gray-900">Áreas de Trabajo</h1><p className="text-sm text-gray-500">Gestión de áreas para asignación de flota.</p></div>
         <div className="bg-slate-100 p-2 rounded-full"><MapPin className="h-6 w-6 text-slate-600" /></div>
@@ -53,15 +59,15 @@ export default function AreasList() {
         <Card className="md:col-span-1 h-fit">
           <CardHeader><CardTitle>Nueva Área</CardTitle></CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit((d: any) => createMut.mutate(d))} className="space-y-5">
+            <form onSubmit={handleSubmit((d: any) => createMut.mutate(d))} className="flex flex-col gap-5">
               <Input label="Nombre del Área" {...register('nombre', {required: true})} />
               <Button type="submit" className="w-full" isLoading={createMut.isPending}><Plus className="w-4 h-4 mr-2"/> Agregar Área</Button>
             </form>
           </CardContent>
         </Card>
         <Card className="md:col-span-2">
-          <CardContent className="p-0">
-            <DataTable columns={columns} data={areas} isLoading={isLoading} emptyMessage="No hay áreas." />
+          <CardContent>
+            <DataTable columns={columns} data={areas} isLoading={isLoading} emptyMessage="No hay áreas." enableColumnFilters={true} />
           </CardContent>
         </Card>
       </div>

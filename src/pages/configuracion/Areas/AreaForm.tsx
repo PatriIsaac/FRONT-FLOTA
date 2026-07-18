@@ -60,7 +60,7 @@ export default function AreaForm({ isOpen, onClose, area }: Props) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={area ? 'Editar Área' : 'Nueva Área'}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col" style={{ gap: '24px' }}>
         <Input 
           label="Nombre del Área" 
           placeholder="Ej: Logística, Administración..."
@@ -69,7 +69,7 @@ export default function AreaForm({ isOpen, onClose, area }: Props) {
         />
         
         <div className="flex justify-end gap-4 pt-4">
-          <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
+          <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>
             {area ? 'Actualizar' : 'Guardar'}
           </Button>

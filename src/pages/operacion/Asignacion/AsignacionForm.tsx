@@ -89,7 +89,7 @@ export default function AsignacionForm({ isOpen, onClose, asignacion }: Props) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={asignacion ? 'Editar Asignación' : 'Nueva Asignación'}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col" style={{ gap: '24px' }}>
         <Select 
           label="Vehículo" 
           {...register('vehiculoId')} 
@@ -136,7 +136,7 @@ export default function AsignacionForm({ isOpen, onClose, asignacion }: Props) {
         </div>
         
         <div className="flex justify-end gap-4 pt-4">
-          <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
+          <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>
             {asignacion ? 'Actualizar' : 'Guardar'}
           </Button>

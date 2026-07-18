@@ -28,20 +28,27 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-6">
       <div 
         className={cn(
-          "bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-200",
+          "bg-white border border-gray-200 rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-200",
           className
         )}
       >
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border-color)]">
-          <h2 className="text-xl font-semibold text-[color:var(--text-primary)]">{title}</h2>
+        <div 
+          className="flex items-center justify-between"
+          style={{ padding: '32px 32px 16px' }}
+        >
+          <h2 className="text-xl font-bold text-gray-900">{title}</h2>
           <button 
             onClick={onClose}
-            className="p-1.5 hover:bg-[var(--input-bg)] rounded-full transition-colors text-[color:var(--text-secondary)]"
+            className="hover:bg-gray-100 rounded-full transition-colors text-gray-500"
+            style={{ padding: '6px' }}
           >
             <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="p-6 overflow-y-auto">
+        <div 
+          className="overflow-y-auto"
+          style={{ padding: '0 32px 32px' }}
+        >
           {children}
         </div>
       </div>

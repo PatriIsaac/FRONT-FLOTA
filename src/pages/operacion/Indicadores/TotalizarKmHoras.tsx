@@ -84,7 +84,7 @@ export default function TotalizarKmHoras() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Totalizar km y horas mensuales</h1>
@@ -118,8 +118,9 @@ export default function TotalizarKmHoras() {
 
       {isCalculated && (
         <Card>
-          <CardContent className="p-0">
-            <DataTable 
+          <CardContent>
+            <DataTable
+              enableColumnFilters={true} 
               columns={columns}
               data={dataCalculada}
               isLoading={isLoading}

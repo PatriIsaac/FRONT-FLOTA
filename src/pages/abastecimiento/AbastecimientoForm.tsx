@@ -90,8 +90,8 @@ export default function AbastecimientoForm({ isOpen, onClose, abastecimiento }: 
       onClose={onClose}
       title={abastecimiento ? 'Editar Abastecimiento' : 'Nuevo Abastecimiento'}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col" style={{ gap: '24px' }}>
+        <div className="grid grid-cols-2 gap-4">
           <Input label="Número de Orden" {...register('numeroOrden')} error={errors.numeroOrden?.message} />
           <Select
             label="Vehículo"
@@ -104,7 +104,7 @@ export default function AbastecimientoForm({ isOpen, onClose, abastecimiento }: 
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-4">
           <Select
             label="Servicentro"
             {...register('servicentroId')}
@@ -117,7 +117,7 @@ export default function AbastecimientoForm({ isOpen, onClose, abastecimiento }: 
           <Input label="Fecha" type="date" {...register('fecha')} error={errors.fecha?.message} />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-4">
           <Select
             label="Tipo Combustible"
             {...register('tipoCombustible')}
@@ -125,18 +125,19 @@ export default function AbastecimientoForm({ isOpen, onClose, abastecimiento }: 
             options={[
               { value: 'DIESEL', label: 'DIESEL' },
               { value: 'GASOLINA', label: 'GASOLINA' },
+              { value: 'LUBRICANTE', label: 'LUBRICANTE' },
             ]}
           />
           <Input label="Km Velocímetro" type="number" {...register('kmVelocimetro')} error={errors.kmVelocimetro?.message} />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-4">
           <Input label="Galones" type="number" step="0.01" {...register('galones')} error={errors.galones?.message} />
           <Input label="Costo ($)" type="number" step="0.01" {...register('costo')} error={errors.costo?.message} />
         </div>
 
-        <div className="flex justify-end gap-4 pt-6">
-          <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
+        <div className="flex justify-end gap-4 pt-6 mt-2 border-t border-gray-100">
+          <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>
             {abastecimiento ? 'Actualizar' : 'Guardar'}
           </Button>

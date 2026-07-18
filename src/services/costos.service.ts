@@ -13,6 +13,14 @@ export const costosService = {
   deleteFijo: async (id: number) => {
     await api.delete(`/costos/fijos/${id}`);
   },
+  importarFijos: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const { data } = await api.post('/costos/fijos/importar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return data;
+  },
 
   // Operacion
   getAllOperacion: async () => {

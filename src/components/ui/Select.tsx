@@ -12,17 +12,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-[color:var(--text-secondary)] mb-1.5">
+          <label className="block text-[13px] font-semibold text-gray-800 mb-1.5">
             {label}
           </label>
         )}
         <select
           ref={ref}
           className={cn(
-            "flex h-10 w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm text-[color:var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50",
+            "block w-full rounded-lg border border-gray-200 bg-white text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all disabled:cursor-not-allowed disabled:opacity-50",
             error && "border-red-500 focus:ring-red-500",
             className
           )}
+          style={{ height: '44px', padding: '0 12px' }}
           {...props}
         >
           <option value="" disabled>Seleccione una opción</option>

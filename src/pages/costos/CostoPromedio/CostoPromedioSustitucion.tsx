@@ -100,7 +100,7 @@ export default function CostoPromedioSustitucion() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Costo Promedio Anual (Cpa)</h1>
@@ -113,7 +113,7 @@ export default function CostoPromedioSustitucion() {
 
       {/* Análisis de sustitución óptima (curva Cpa por año, motor del backend) */}
       <Card>
-        <CardContent className="p-6 space-y-4">
+        <CardContent className="p-6 flex flex-col gap-4">
           <div className="flex items-end gap-4 max-w-md">
             <div className="flex-1">
               <Select
@@ -164,7 +164,7 @@ export default function CostoPromedioSustitucion() {
         <Card className="lg:col-span-1">
           <CardContent className="p-6">
             <h3 className="font-semibold text-gray-900 mb-4">Guardar Cpa Evaluado</h3>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
               <Select 
                 label="Vehículo" 
                 {...register('vehiculoId')} 
@@ -212,7 +212,7 @@ export default function CostoPromedioSustitucion() {
 
         <div className="lg:col-span-2">
           <Card className="h-full">
-            <CardContent className="p-0">
+            <CardContent>
               <DataTable 
                 columns={columns}
                 data={costosPromedio}

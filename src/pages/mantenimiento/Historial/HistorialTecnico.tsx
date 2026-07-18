@@ -55,7 +55,7 @@ export default function HistorialTecnico() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Historial Técnico</h1>
@@ -84,8 +84,9 @@ export default function HistorialTecnico() {
 
       {selectedVehiculoId !== 0 ? (
         <Card>
-          <CardContent className="p-0">
-            <DataTable 
+          <CardContent>
+            <DataTable
+            enableColumnFilters={true} 
               columns={columns}
               data={historial}
               isLoading={isLoading}

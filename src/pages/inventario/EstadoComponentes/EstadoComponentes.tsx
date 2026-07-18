@@ -47,7 +47,7 @@ export default function EstadoComponentes() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Consulta de Estado de Componentes</h1>
@@ -120,7 +120,7 @@ export default function EstadoComponentes() {
               </h3>
               
               {conjuntosInstalados.length > 0 ? (
-                <div className="space-y-4">
+                <div className="flex flex-col gap-6">
                   {conjuntosInstalados.map((conjunto: any) => (
                     <div key={conjunto.conjuntoId} className={`p-4 border-l-4 rounded-r-lg shadow-sm ${getColorPorEstado(conjunto.estado)}`}>
                       <div className="flex justify-between items-start">

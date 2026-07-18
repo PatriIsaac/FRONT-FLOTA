@@ -227,7 +227,7 @@ export default function Dashboard() {
         <CardHeader className="flex flex-row items-center justify-between py-4">
           <CardTitle>Actividad reciente (datos de ejemplo)</CardTitle>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent>
           <DataTable columns={columns} data={recentActivity} />
         </CardContent>
       </Card>

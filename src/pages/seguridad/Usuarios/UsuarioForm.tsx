@@ -13,14 +13,14 @@ import { alerts } from '../../../utils/alerts';
 
 const usuarioSchema = z
   .object({
-    nombres: z.string().min(1, 'El nombre es requerido'),
-    apellidos: z.string().min(1, 'El apellido es requerido'),
-    email: z.string().email('Email inválido'),
+    nombres: z.string().min(1, 'El campo Nombres no puede estar vacío'),
+    apellidos: z.string().min(1, 'El campo Apellidos no puede estar vacío'),
+    email: z.string().min(1, 'El campo Correo no puede estar vacío').email('Debe ingresar un correo válido'),
     password: z.string().optional(),
-    rolId: z.coerce.number().min(1, 'Seleccione un rol'),
+    rolId: z.coerce.number().min(1, 'Debe seleccionar un rol del sistema'),
   })
   .refine((d) => !d.password || d.password.length >= 6, {
-    message: 'Mínimo 6 caracteres',
+    message: 'La contraseña debe tener mínimo 6 caracteres',
     path: ['password'],
   });
 
@@ -83,8 +83,8 @@ export default function UsuarioForm({ isOpen, onClose, usuario }: Props) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={usuario ? 'Editar Usuario' : 'Nuevo Usuario'}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col" style={{ gap: '24px' }}>
+        <div className="grid grid-cols-2 gap-4">
           <Input label="Nombres" {...register('nombres')} error={errors.nombres?.message} />
           <Input label="Apellidos" {...register('apellidos')} error={errors.apellidos?.message} />
         </div>
@@ -105,8 +105,8 @@ export default function UsuarioForm({ isOpen, onClose, usuario }: Props) {
           ]}
         />
 
-        <div className="flex justify-end gap-4 pt-6">
-          <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
+        <div className="flex justify-end gap-4 pt-6 mt-2 border-t border-gray-100">
+          <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>
             {usuario ? 'Actualizar' : 'Guardar'}
           </Button>

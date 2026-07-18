@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -24,6 +24,7 @@ type CostoFijoFormData = z.infer<typeof costoFijoSchema>;
 
 export default function ImportarCostosFijos() {
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: vehiculos = [] } = useQuery({
     queryKey: ['vehiculos'],
@@ -61,6 +62,26 @@ export default function ImportarCostosFijos() {
     }
   });
 
+  const importMutation = useMutation({
+    mutationFn: costosService.importarFijos,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['costosFijos'] });
+      alerts.success(`Se importaron ${data.count} registros exitosamente`);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    },
+    onError: () => {
+      alerts.error('Error al importar el archivo CSV');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      importMutation.mutate(file);
+    }
+  };
+
   const onSubmit = (data: CostoFijoFormData) => {
     createMutation.mutate(data);
   };
@@ -93,7 +114,7 @@ export default function ImportarCostosFijos() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Ingresar Costos Fijos</h1>
@@ -110,7 +131,7 @@ export default function ImportarCostosFijos() {
             <CardTitle>Registro Manual</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
               <Select 
                 label="Vehículo" 
                 {...register('vehiculoId')} 
@@ -147,8 +168,21 @@ export default function ImportarCostosFijos() {
               </Button>
 
               <div className="mt-6 pt-4 border-t border-gray-200">
-                <p className="text-sm text-gray-500 mb-2">O importar masivamente:</p>
-                <Button type="button" variant="outline" className="w-full" onClick={() => alert('Función de carga CSV próximamente activa.')}>
+                <p className="text-sm text-gray-500 mb-2">O importar masivamente (CSV):</p>
+                <input 
+                  type="file" 
+                  accept=".csv" 
+                  className="hidden" 
+                  ref={fileInputRef} 
+                  onChange={handleFileChange} 
+                />
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => fileInputRef.current?.click()}
+                  isLoading={importMutation.isPending}
+                >
                   <Upload className="w-4 h-4 mr-2" /> Subir archivo CSV
                 </Button>
               </div>
@@ -158,7 +192,7 @@ export default function ImportarCostosFijos() {
 
         <div className="lg:col-span-2">
           <Card className="h-full">
-            <CardContent className="p-0">
+            <CardContent>
               <DataTable 
                 columns={columns}
                 data={costosFijos}

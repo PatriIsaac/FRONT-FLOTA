@@ -54,7 +54,7 @@ export default function CalcularRendimiento() {
       if (!agrupado[a.vehiculoId]) {
         agrupado[a.vehiculoId] = { vehiculo: a.Vehiculo, vehiculoId: a.vehiculoId, totalGalones: 0, totalKm: 0 };
       }
-      agrupado[a.vehiculoId].totalGalones += (a.galones || 0);
+      agrupado[a.vehiculoId].totalGalones += Number(a.galones || 0);
     });
 
     // Sumamos km de movimientos
@@ -62,7 +62,7 @@ export default function CalcularRendimiento() {
       if (!agrupado[m.vehiculoId]) {
         agrupado[m.vehiculoId] = { vehiculo: m.Vehiculo, vehiculoId: m.vehiculoId, totalGalones: 0, totalKm: 0 };
       }
-      const kmRecorridos = (m.kmLlegada || 0) - (m.kmSalida || 0);
+      const kmRecorridos = Number(m.kmLlegada || 0) - Number(m.kmSalida || 0);
       agrupado[m.vehiculoId].totalKm += (kmRecorridos > 0 ? kmRecorridos : 0);
     });
 
@@ -93,7 +93,7 @@ export default function CalcularRendimiento() {
     { 
       key: 'totalGalones', 
       header: 'Total Galones',
-      render: (d: any) => <span className="font-medium text-blue-600">{d.totalGalones.toFixed(2)} gal.</span>
+      render: (d: any) => <span className="font-medium text-blue-600">{Number(d.totalGalones).toFixed(2)} gal.</span>
     },
     { 
       key: 'rendimiento', 
@@ -107,7 +107,7 @@ export default function CalcularRendimiento() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Calcular Rendimiento</h1>
@@ -141,8 +141,9 @@ export default function CalcularRendimiento() {
 
       {isCalculated && (
         <Card>
-          <CardContent className="p-0">
-            <DataTable 
+          <CardContent>
+            <DataTable
+              enableColumnFilters={true} 
               columns={columns}
               data={dataCalculada}
               isLoading={loadAbast || loadMov}

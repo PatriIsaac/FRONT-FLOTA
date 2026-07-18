@@ -82,8 +82,8 @@ export default function VehiculoForm({ isOpen, onClose, vehiculo }: Props) {
       onClose={onClose}
       title={vehiculo ? 'Editar Vehículo' : 'Nuevo Vehículo'}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col" style={{ gap: '24px' }}>
+        <div className="grid grid-cols-2 gap-4">
           <Input
             label="Código Patrimonial"
             {...register('codigoPatrimonio')}
@@ -97,7 +97,7 @@ export default function VehiculoForm({ isOpen, onClose, vehiculo }: Props) {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-4">
           <Select
             label="Categoría"
             {...register('categoriaVehiculoId')}
@@ -115,16 +115,16 @@ export default function VehiculoForm({ isOpen, onClose, vehiculo }: Props) {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-4">
           <Input
-            label="Valor Nuevo ($)"
+            label="Valor Nuevo (S/)"
             type="number"
             step="0.01"
             {...register('valorNuevo')}
             error={errors.valorNuevo?.message}
           />
           <Input
-            label="Valor Residual ($)"
+            label="Valor Residual (S/)"
             type="number"
             step="0.01"
             {...register('valorResidual')}
@@ -139,8 +139,8 @@ export default function VehiculoForm({ isOpen, onClose, vehiculo }: Props) {
           options={ESTADOS_VEHICULO.map(e => ({ value: e, label: e }))}
         />
 
-        <div className="flex justify-end gap-4 pt-6">
-          <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
+        <div className="flex justify-end gap-4 pt-6 mt-2 border-t border-gray-100">
+          <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>
             {vehiculo ? 'Actualizar' : 'Guardar'}
           </Button>

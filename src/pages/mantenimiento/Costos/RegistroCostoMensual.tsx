@@ -77,7 +77,7 @@ export default function RegistroCostoMensual() {
     { 
       key: 'total', 
       header: 'Total Mensual (S/.)',
-      render: (d: any) => <span className="font-bold text-gray-900">S/. {parseFloat(d.propio) + parseFloat(d.terceros)}</span>
+      render: (d: any) => <span className="font-bold text-gray-900">S/. {Number(d.propio || 0) + Number(d.terceros || 0)}</span>
     },
     {
       key: 'acciones',
@@ -93,11 +93,11 @@ export default function RegistroCostoMensual() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Registrar Costo Mensual</h1>
-          <p className="text-sm text-gray-500">Consolidación de los costos de mantenimiento del periodo (MA 122 02 03).</p>
+          <p className="text-sm text-gray-500">Consolidación de los costos de mantenimiento del periodo.</p>
         </div>
         <div className="bg-emerald-100 p-2 rounded-full">
           <Calculator className="h-6 w-6 text-emerald-600" />
@@ -108,7 +108,7 @@ export default function RegistroCostoMensual() {
         <Card className="lg:col-span-1">
           <CardContent className="p-6">
             <h3 className="font-semibold text-gray-900 mb-4">Guardar Consolidado</h3>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
               <Select 
                 label="Vehículo" 
                 {...register('vehiculoId')} 
@@ -149,8 +149,9 @@ export default function RegistroCostoMensual() {
 
         <div className="lg:col-span-2">
           <Card className="h-full">
-            <CardContent className="p-0">
-              <DataTable 
+            <CardContent>
+              <DataTable
+            enableColumnFilters={true} 
                 columns={columns}
                 data={registros}
                 isLoading={isLoading}

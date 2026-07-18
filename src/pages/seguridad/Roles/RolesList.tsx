@@ -31,7 +31,7 @@ export default function RolesList() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
         <div><h1 className="text-2xl font-bold text-gray-900">Roles del Sistema</h1><p className="text-sm text-gray-500">Gestión de niveles de acceso.</p></div>
         <div className="bg-slate-100 p-2 rounded-full"><Shield className="h-6 w-6 text-slate-600" /></div>
@@ -40,15 +40,15 @@ export default function RolesList() {
         <Card className="md:col-span-1 h-fit">
           <CardHeader><CardTitle>Nuevo Rol</CardTitle></CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit((d: any) => createMut.mutate(d))} className="space-y-4">
+            <form onSubmit={handleSubmit((d: any) => createMut.mutate(d))} className="flex flex-col gap-6">
               <Input label="Nombre del Rol" placeholder="ADMINISTRADOR" {...register('nombre', {required: true})} />
               <Input label="Descripción" {...register('descripcion', {required: true})} />
-              <Button type="submit" className="w-full" isLoading={createMut.isPending}><Plus className="w-4 h-4 mr-2"/> Registrar Rol</Button>
+              <Button type="submit" className="w-full mt-2" isLoading={createMut.isPending}><Plus className="w-4 h-4 mr-2"/> Registrar Rol</Button>
             </form>
           </CardContent>
         </Card>
         <Card className="md:col-span-2">
-          <CardContent className="p-0">
+          <CardContent>
             <DataTable columns={columns} data={roles} isLoading={isLoading} emptyMessage="No hay roles." />
           </CardContent>
         </Card>

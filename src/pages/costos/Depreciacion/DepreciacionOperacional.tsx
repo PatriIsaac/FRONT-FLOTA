@@ -64,7 +64,7 @@ export default function DepreciacionOperacional() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Depreciación Lineal Operacional</h1>
@@ -88,7 +88,7 @@ export default function DepreciacionOperacional() {
       </div>
 
       <Card>
-        <CardContent className="p-0">
+        <CardContent>
           <DataTable 
             columns={columns}
             data={dataCalculada}

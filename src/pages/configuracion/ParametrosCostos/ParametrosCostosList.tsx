@@ -8,9 +8,11 @@ import { Button } from '../../../components/ui/Button';
 import { DataTable } from '../../../components/ui/DataTable';
 import { alerts } from '../../../utils/alerts';
 import ParametroCostoForm from './ParametroCostoForm';
+import ImportarCSVModal from './ImportarCSVModal';
 
 export default function ParametrosCostosList() {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [editingCosto, setEditingCosto] = useState<CostoFijoMensual | null>(null);
   const queryClient = useQueryClient();
 
@@ -76,19 +78,24 @@ export default function ParametrosCostosList() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Parámetros de Costos (CFP/CFV)</h1>
           <p className="text-sm text-gray-500">Ingreso de Costo Fijo Provisto por Contabilidad de Costos.</p>
         </div>
-        <Button onClick={() => { setEditingCosto(null); setIsFormOpen(true); }}>
-          <Plus className="h-4 w-4 mr-2" /> Nuevo Registro
-        </Button>
+        <div className="flex gap-3">
+          <Button variant="secondary" onClick={() => setIsImportOpen(true)}>
+            <Calculator className="h-4 w-4 mr-2" /> Importar CSV
+          </Button>
+          <Button onClick={() => { setEditingCosto(null); setIsFormOpen(true); }}>
+            <Plus className="h-4 w-4 mr-2" /> Nuevo Registro
+          </Button>
+        </div>
       </div>
 
       <Card>
-        <CardContent className="p-0">
+        <CardContent>
           {!isLoading && costos.length === 0 ? (
             <div className="p-12 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
@@ -108,6 +115,7 @@ export default function ParametrosCostosList() {
               data={costos}
               isLoading={isLoading}
               emptyMessage="No se encontraron registros."
+              enableColumnFilters={true}
             />
           )}
         </CardContent>
@@ -117,6 +125,11 @@ export default function ParametrosCostosList() {
         isOpen={isFormOpen} 
         onClose={() => setIsFormOpen(false)} 
         costo={editingCosto}
+      />
+
+      <ImportarCSVModal 
+        isOpen={isImportOpen}
+        onClose={() => setIsImportOpen(false)}
       />
     </div>
   );

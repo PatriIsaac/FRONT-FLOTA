@@ -18,7 +18,7 @@ const ordenSchema = z.object({
   numero: z.string().min(1, 'Número requerido'),
   vehiculoId: z.coerce.number().min(1, 'Seleccione un vehículo'),
   tipoId: z.coerce.number().min(1, 'Seleccione un tipo de mantenimiento'),
-  tallerId: z.coerce.number().min(1, 'Seleccione un taller'),
+  tallerId: z.coerce.number().optional(),
   fechaEntrada: z.string().min(1, 'Fecha requerida'),
   fechaSalida: z.string().optional(),
   kilometraje: z.coerce.number().min(0, 'Kilometraje requerido'),
@@ -54,17 +54,18 @@ export default function OrdenForm({ isOpen, onClose, orden }: Props) {
         kilometraje: orden.kilometraje,
       });
     } else {
+      const defaultTallerId = talleres.length > 0 ? talleres[0].tallerId : 1;
       reset({
         numero: '',
         vehiculoId: 0,
         tipoId: 0,
-        tallerId: 0,
+        tallerId: defaultTallerId,
         fechaEntrada: new Date().toISOString().split('T')[0],
         fechaSalida: '',
         kilometraje: 0,
       });
     }
-  }, [orden, reset, isOpen]);
+  }, [orden, reset, isOpen, talleres]);
 
   const mutation = useMutation({
     mutationFn: (data: OrdenFormData) =>
@@ -74,32 +75,37 @@ export default function OrdenForm({ isOpen, onClose, orden }: Props) {
       alerts.success(orden ? 'Orden actualizada' : 'Orden registrada');
       onClose();
     },
-    onError: () => {
-      alerts.error('Error al guardar la orden');
+    onError: (error: any) => {
+      alerts.error(error.response?.data?.message || 'Error al guardar la orden');
     }
   });
 
   const onSubmit = (data: OrdenFormData) => {
-    mutation.mutate(data);
+    const finalData = { ...data };
+    if (!finalData.tallerId) {
+      finalData.tallerId = talleres.length > 0 ? talleres[0].tallerId : 1;
+    }
+    if (finalData.fechaSalida === '') {
+      delete finalData.fechaSalida;
+    }
+    mutation.mutate(finalData as any);
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={orden ? 'Editar Orden' : 'Nueva Orden'}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col" style={{ gap: '24px' }}>
+        <div className="grid grid-cols-2 gap-4">
           <Input label="Número" {...register('numero')} error={errors.numero?.message} />
           <Select
             label="Taller"
+            disabled
             {...register('tallerId')}
             error={errors.tallerId?.message}
-            options={[
-              { value: 0, label: 'Seleccione un taller...' },
-              ...talleres.map(t => ({ value: t.tallerId, label: t.nombre })),
-            ]}
+            options={talleres.map(t => ({ value: t.tallerId, label: t.nombre }))}
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-4">
           <Select
             label="Vehículo"
             {...register('vehiculoId')}
@@ -120,7 +126,7 @@ export default function OrdenForm({ isOpen, onClose, orden }: Props) {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-4">
           <Input label="Fecha Entrada" type="date" {...register('fechaEntrada')} error={errors.fechaEntrada?.message} />
           <Input label="Fecha Salida" type="date" {...register('fechaSalida')} error={errors.fechaSalida?.message} />
         </div>
@@ -129,8 +135,8 @@ export default function OrdenForm({ isOpen, onClose, orden }: Props) {
           <Input label="Kilometraje" type="number" {...register('kilometraje')} error={errors.kilometraje?.message} />
         </div>
 
-        <div className="flex justify-end gap-4 pt-6">
-          <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
+        <div className="flex justify-end gap-4 pt-6 mt-2 border-t border-gray-100">
+          <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>
             {orden ? 'Actualizar' : 'Guardar'}
           </Button>

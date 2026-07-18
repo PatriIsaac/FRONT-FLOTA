@@ -79,7 +79,7 @@ export default function ProgramacionPreventivo() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Programación de Mantenimiento Preventivo</h1>
@@ -105,8 +105,9 @@ export default function ProgramacionPreventivo() {
       </div>
 
       <Card>
-        <CardContent className="p-0">
-          <DataTable 
+        <CardContent>
+          <DataTable
+            enableColumnFilters={true} 
             columns={columns}
             data={dataProgramacion}
             isLoading={loadVehiculos || loadMov}

@@ -78,7 +78,7 @@ export default function ParametroCostoForm({ isOpen, onClose, costo }: Props) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={costo ? 'Editar Parámetro' : 'Registrar CFP/CFV'}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col" style={{ gap: '24px' }}>
         <Select 
           label="Vehículo" 
           {...register('vehiculoId')} 
@@ -120,7 +120,7 @@ export default function ParametroCostoForm({ isOpen, onClose, costo }: Props) {
         </div>
         
         <div className="flex justify-end gap-4 pt-4">
-          <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
+          <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>
             {costo ? 'Actualizar' : 'Guardar'}
           </Button>

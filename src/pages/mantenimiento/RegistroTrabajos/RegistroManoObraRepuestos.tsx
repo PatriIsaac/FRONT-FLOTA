@@ -30,12 +30,7 @@ export default function RegistroManoObraRepuestos() {
   // I need to use api.get('/mantenimientos/ordenes') or similar. I'll just use a mock query here if it fails, or I should update mantenimientoService.ts.
   const { data: ordenes = [] } = useQuery({
     queryKey: ['ordenes'],
-    queryFn: async () => {
-      // Assuming api is exported from api.ts
-      const { api } = await import('../../../services/api');
-      const { data } = await api.get('/mantenimientos/ordenes');
-      return data;
-    }
+    queryFn: mantenimientoService.getAll
   });
 
   const { data: detalles = [], isLoading } = useQuery({

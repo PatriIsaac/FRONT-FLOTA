@@ -51,6 +51,11 @@ export default function InventarioFisico() {
       queryClient.invalidateQueries({ queryKey: ['inventarioFisico'] });
       alerts.success('Inventario registrado');
       reset();
+    },
+    onError: (err: any) => {
+      const msg = err.response?.data?.error || err.message || 'Error al guardar';
+      alerts.error(msg);
+      console.error("Detalle del error:", err.response || err);
     }
   });
 
@@ -102,7 +107,7 @@ export default function InventarioFisico() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Inventario Físico de Flota</h1>
@@ -119,7 +124,7 @@ export default function InventarioFisico() {
             <CardTitle>Auditoría / Inspección</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
               <Select 
                 label="Vehículo Auditado" 
                 {...register('vehiculoId')} 
@@ -172,7 +177,7 @@ export default function InventarioFisico() {
 
         <div className="lg:col-span-2">
           <Card className="h-full">
-            <CardContent className="p-0">
+            <CardContent>
               <DataTable 
                 columns={columns}
                 data={inventarios}

@@ -11,8 +11,14 @@ export const mantenimientoService = {
     return data;
   },
   create: async (dto: CreateOrdenServicioDTO): Promise<OrdenServicio> => {
-    const { data } = await api.post('/mantenimientos', dto);
-    return data;
+    console.log("Sending POST /mantenimientos", dto);
+    try {
+      const { data } = await api.post('/mantenimientos', dto);
+      return data;
+    } catch (e: any) {
+      console.error("POST /mantenimientos failed:", e.response?.data || e.message);
+      throw e;
+    }
   },
   update: async (id: number, dto: UpdateOrdenServicioDTO): Promise<OrdenServicio> => {
     const { data } = await api.patch(`/mantenimientos/${id}`, dto);

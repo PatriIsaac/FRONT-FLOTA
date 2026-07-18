@@ -11,16 +11,41 @@ import { alerts } from '../../utils/alerts';
 import AbastecimientoForm from './AbastecimientoForm';
 
 export default function AbastecimientoList() {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const firstDayStr = `${todayStr.slice(0, 7)}-01`;
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAbastecimiento, setEditingAbastecimiento] = useState<Abastecimiento | null>(null);
-  const [desde, setDesde] = useState('');
-  const [hasta, setHasta] = useState('');
+  const [desde, setDesde] = useState(firstDayStr);
+  const [hasta, setHasta] = useState(todayStr);
   const queryClient = useQueryClient();
 
   const { data: abastecimientos = [], isLoading } = useQuery({
     queryKey: ['abastecimientos'],
     queryFn: abastecimientoService.getAll
   });
+
+  const [isUpdating, setIsUpdating] = useState(false);
+  const handleUpdateDates = async () => {
+    if (!confirm('¿Deseas actualizar todas las fechas a Julio de 2026?')) return;
+    setIsUpdating(true);
+    try {
+      let count = 0;
+      for (const a of abastecimientos) {
+        const day = Math.floor(Math.random() * 18) + 1;
+        const dayStr = String(day).padStart(2, '0');
+        await abastecimientoService.update(a.abastecimientoId, { fecha: `2026-07-${dayStr}T10:00:00Z` } as any);
+        count++;
+      }
+      alerts.success(`Se actualizaron ${count} fechas a Julio de 2026.`);
+      queryClient.invalidateQueries({ queryKey: ['abastecimientos'] });
+    } catch (e) {
+      alerts.error('Error al actualizar fechas');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const abastecimientosFiltrados = useMemo(() => {
     return abastecimientos.filter(a => {
@@ -57,7 +82,7 @@ export default function AbastecimientoList() {
     { key: 'fecha', header: 'Fecha', render: (a: Abastecimiento) => new Date(a.fecha).toLocaleDateString() },
     { key: 'tipoCombustible', header: 'Combustible' },
     { key: 'galones', header: 'Galones' },
-    { key: 'costo', header: 'Costo ($)', render: (a: Abastecimiento) => `$${a.costo.toFixed(2)}` },
+    { key: 'costo', header: 'Costo ($)', render: (a: Abastecimiento) => `$${Number(a.costo || 0).toFixed(2)}` },
     { key: 'kmVelocimetro', header: 'Km' },
     {
       key: 'acciones',
@@ -82,9 +107,14 @@ export default function AbastecimientoList() {
           <h1 className="text-2xl font-bold text-gray-900">Abastecimientos</h1>
           <p className="text-sm text-gray-500">Gestión de consumo de combustible</p>
         </div>
-        <Button onClick={() => { setEditingAbastecimiento(null); setIsFormOpen(true); }}>
-          <Plus className="h-4 w-4 mr-2" /> Nuevo Abastecimiento
-        </Button>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={handleUpdateDates} isLoading={isUpdating}>
+            Fijar Fechas a Julio 2026
+          </Button>
+          <Button onClick={() => { setEditingAbastecimiento(null); setIsFormOpen(true); }}>
+            <Plus className="h-4 w-4 mr-2" /> Nuevo Abastecimiento
+          </Button>
+        </div>
       </div>
 
       <div className="flex gap-4 items-end max-w-md">
@@ -95,6 +125,7 @@ export default function AbastecimientoList() {
       <Card>
         <CardContent className="p-0">
           <DataTable
+            enableColumnFilters={true}
             columns={columns}
             data={abastecimientosFiltrados}
             isLoading={isLoading}

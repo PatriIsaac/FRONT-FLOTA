@@ -90,7 +90,7 @@ export default function VehiculosList() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Mantenimiento de Vehículos</h1>
@@ -110,13 +110,14 @@ export default function VehiculosList() {
       </div>
 
       <Card>
-        <CardContent className="p-0">
+        <CardContent>
           <DataTable
             columns={columns}
             data={vehiculosFiltrados}
             isLoading={isLoading}
             emptyMessage="No se encontraron vehículos registrados."
             pageSize={10}
+            enableColumnFilters={true}
           />
         </CardContent>
       </Card>

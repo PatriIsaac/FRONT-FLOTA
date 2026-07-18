@@ -69,7 +69,7 @@ export default function ServicentroForm({ isOpen, onClose, servicentro }: Props)
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={servicentro ? 'Editar Servicentro' : 'Nuevo Servicentro'}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col" style={{ gap: '24px' }}>
         <Input
           label="Razón Social"
           placeholder="Ej: Grifo Repsol"
@@ -99,7 +99,7 @@ export default function ServicentroForm({ isOpen, onClose, servicentro }: Props)
         />
 
         <div className="flex justify-end gap-4 pt-4">
-          <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
+          <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>
             {servicentro ? 'Actualizar' : 'Guardar'}
           </Button>

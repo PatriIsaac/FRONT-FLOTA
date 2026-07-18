@@ -54,11 +54,11 @@ export default function EmitirOrden() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center hide-print">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Emitir Orden de Abastecimiento</h1>
-          <p className="text-sm text-gray-500">Autorización previa emitida por el encargado de garaje (MA 122 01 02).</p>
+          <p className="text-sm text-gray-500">Autorización previa emitida por el encargado de garaje.</p>
         </div>
         <div className="bg-amber-100 p-2 rounded-full">
           <FileText className="h-6 w-6 text-amber-600" />
@@ -68,7 +68,7 @@ export default function EmitirOrden() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="hide-print">
           <CardContent className="p-6">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
               <Select 
                 label="Vehículo a Abastecer" 
                 {...register('vehiculoId')} 
@@ -95,6 +95,7 @@ export default function EmitirOrden() {
                     { value: 'DIESEL', label: 'Diésel' },
                     { value: 'GASOLINA', label: 'Gasolina' },
                     { value: 'GNV', label: 'GNV' },
+                    { value: 'LUBRICANTE', label: 'Lubricante' },
                   ]}
                 />
                 
@@ -129,7 +130,7 @@ export default function EmitirOrden() {
                 <h2 className="text-xl font-bold uppercase tracking-wider">Orden de Abastecimiento</h2>
                 <p className="text-amber-100 print:text-gray-300">N° {ordenGenerada.numeroOrden}</p>
               </div>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-6 flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-500 block text-xs uppercase">Fecha de Emisión</span>

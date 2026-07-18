@@ -74,8 +74,8 @@ export default function ConductorForm({ isOpen, onClose, conductor }: Props) {
       onClose={onClose} 
       title={conductor ? 'Editar Conductor' : 'Nuevo Conductor'}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col" style={{ gap: '24px' }}>
+        <div className="grid grid-cols-2 gap-4">
           <Input label="Documento" {...register('documento')} error={errors.documento?.message} />
           <Input label="Nombre" {...register('nombre')} error={errors.nombre?.message} />
         </div>
@@ -87,8 +87,8 @@ export default function ConductorForm({ isOpen, onClose, conductor }: Props) {
           </label>
         </div>
 
-        <div className="flex justify-end gap-4 pt-6">
-          <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
+        <div className="flex justify-end gap-4 pt-6 mt-2 border-t border-gray-100">
+          <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>
             {conductor ? 'Actualizar' : 'Guardar'}
           </Button>

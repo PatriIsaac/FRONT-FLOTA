@@ -9,8 +9,14 @@ import logoIcon from '../assets/logo-icon.png';
 const ROLE_MAP: Record<string, string> = {
   admin: 'Administrador',
   administrador: 'Administrador',
+  'analista de costos': 'Analista de Costos',
   analista_costos: 'Analista de Costos',
+  'jefe de mantenimiento': 'Jefe de Mantenimiento',
+  jefe_mantenimiento: 'Jefe de Mantenimiento',
+  'encargado de garaje': 'Encargado de Garaje',
   encargado_garaje: 'Encargado de Garaje',
+  conductor: 'Conductor',
+  gerencia: 'Gerencia',
 };
 
 interface SidebarProps {

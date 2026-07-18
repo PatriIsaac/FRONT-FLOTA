@@ -86,7 +86,7 @@ export default function AsignacionList() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Asignar Vehículo a Área</h1>
@@ -98,7 +98,7 @@ export default function AsignacionList() {
       </div>
 
       <Card>
-        <CardContent className="p-0">
+        <CardContent>
           {!isLoading && asignaciones.length === 0 ? (
             <div className="p-12 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 mb-4">
@@ -113,7 +113,8 @@ export default function AsignacionList() {
               </Button>
             </div>
           ) : (
-            <DataTable 
+            <DataTable
+              enableColumnFilters={true} 
               columns={columns}
               data={asignaciones}
               isLoading={isLoading}

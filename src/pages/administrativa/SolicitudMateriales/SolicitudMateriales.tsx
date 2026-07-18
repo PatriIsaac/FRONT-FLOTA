@@ -4,7 +4,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FileText, Printer, Save, Trash2, Plus } from 'lucide-react';
-import { almacenService } from '../../../services/almacen.service';
+import { administrativaService } from '../../../services/administrativa.service';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Input } from '../../../components/ui/Input';
 import { Select } from '../../../components/ui/Select';
@@ -29,14 +29,14 @@ export default function SolicitudMateriales() {
     queryKey: ['ordenes'],
     queryFn: async () => {
       const { api } = await import('../../../services/api');
-      const { data } = await api.get('/mantenimientos/ordenes');
+      const { data } = await api.get('/mantenimientos');
       return data;
     }
   });
 
   const { data: materiales = [] } = useQuery({
     queryKey: ['materiales'],
-    queryFn: almacenService.getAllMateriales
+    queryFn: administrativaService.getMateriales
   });
 
   const { register, control, handleSubmit, reset, watch, formState: { errors } } = useForm<SolicitudFormData>({
@@ -52,7 +52,7 @@ export default function SolicitudMateriales() {
   });
 
   const createMutation = useMutation({
-    mutationFn: almacenService.createSolicitud,
+    mutationFn: administrativaService.createSolicitud,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['solicitudes'] });
       alerts.success('Solicitud generada con éxito');
@@ -78,7 +78,7 @@ export default function SolicitudMateriales() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center hide-print">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Registrar Solicitud de Materiales</h1>
@@ -92,7 +92,7 @@ export default function SolicitudMateriales() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="hide-print">
           <CardContent className="p-6">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
               <Select 
                 label="Orden de Servicio Asociada" 
                 {...register('ordenId')} 
@@ -151,19 +151,19 @@ export default function SolicitudMateriales() {
                 <h2 className="text-xl font-bold uppercase tracking-wider">Solicitud de Materiales de Almacén</h2>
                 <p className="text-blue-100 print:text-gray-300">N° {solicitudImprimible.numero}</p>
               </div>
-              <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm mb-6">
+              <CardContent className="p-6 flex flex-col gap-4 overflow-x-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
                   <div>
                     <span className="text-gray-500 block text-xs uppercase">Fecha de Solicitud</span>
                     <strong className="text-gray-900">{new Date(solicitudImprimible.fecha).toLocaleDateString()}</strong>
                   </div>
                   <div>
-                    <span className="text-gray-500 block text-xs uppercase">Orden de Servicio Relacionada</span>
-                    <strong className="text-gray-900 text-lg">{solicitudImprimible.orden?.numero}</strong>
+                    <span className="text-gray-500 block text-xs uppercase">Orden de Servicio</span>
+                    <strong className="text-gray-900 text-lg">{solicitudImprimible.OrdenServicio?.numero || '-'}</strong>
                   </div>
-                  <div className="col-span-2">
+                  <div className="sm:col-span-2">
                     <span className="text-gray-500 block text-xs uppercase">Vehículo</span>
-                    <strong className="text-gray-900">{solicitudImprimible.orden?.vehiculo?.placa} - {solicitudImprimible.orden?.vehiculo?.codigoPatrimonio}</strong>
+                    <strong className="text-gray-900">{solicitudImprimible.OrdenServicio?.Vehiculo?.placa || '-'} {solicitudImprimible.OrdenServicio?.Vehiculo?.codigoPatrimonio ? `- ${solicitudImprimible.OrdenServicio.Vehiculo.codigoPatrimonio}` : ''}</strong>
                   </div>
                 </div>
 
@@ -178,12 +178,12 @@ export default function SolicitudMateriales() {
                     </tr>
                   </thead>
                   <tbody>
-                    {solicitudImprimible.detalles?.map((d: any, index: number) => (
+                    {solicitudImprimible.DetalleSolicitud?.map((d: any, index: number) => (
                       <tr key={index}>
                         <td className="p-2 border">{index + 1}</td>
-                        <td className="p-2 border">{d.material?.codigo}</td>
-                        <td className="p-2 border">{d.material?.nombre}</td>
-                        <td className="p-2 border text-center">{d.material?.unidad}</td>
+                        <td className="p-2 border">{d.Material?.codigo}</td>
+                        <td className="p-2 border">{d.Material?.nombre}</td>
+                        <td className="p-2 border text-center">{d.Material?.unidad}</td>
                         <td className="p-2 border text-center font-bold">{d.cantidad}</td>
                       </tr>
                     ))}

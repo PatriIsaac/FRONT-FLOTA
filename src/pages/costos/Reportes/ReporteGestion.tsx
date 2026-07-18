@@ -81,7 +81,7 @@ export default function ReporteGestion() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       {/* Encabezado */}
       <div className="flex justify-between items-center">
         <div>
@@ -150,9 +150,9 @@ export default function ReporteGestion() {
             de costos calculados para el mes seleccionado.
           </p>
 
-          <div className="flex flex-wrap items-end gap-4">
-            <div>
-              <label className="block text-sm font-medium text-[color:var(--text-primary)] mb-1">
+          <div className="flex flex-col md:flex-row md:items-end gap-6 bg-slate-50 p-5 rounded-lg border border-slate-200 shadow-sm mt-4">
+            <div className="w-full md:w-64">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 Periodo (Mes/Año)
               </label>
               <input
@@ -163,45 +163,52 @@ export default function ReporteGestion() {
                   setError(null);
                   limpiarPreview();
                 }}
-                className="h-10 px-3 rounded-md border border-[var(--border-color)] bg-[var(--input-bg)] text-[color:var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full h-11 px-4 rounded-md border border-slate-300 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm"
               />
             </div>
 
-            <Button
-              onClick={handleDescargar}
-              isLoading={generando}
-              disabled={generando || previewing}
-              className="bg-emerald-600 hover:bg-emerald-700"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Descargar PDF
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto md:ml-auto">
+              <Button
+                onClick={handleDescargar}
+                isLoading={generando}
+                disabled={generando || previewing}
+                className="bg-emerald-600 hover:bg-emerald-700 h-11 shadow-sm transition-all"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Descargar PDF
+              </Button>
 
-            <Button
-              onClick={handlePrevisualizar}
-              isLoading={previewing}
-              disabled={generando || previewing}
-              variant="outline"
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              Vista previa
-            </Button>
+              <Button
+                onClick={handlePrevisualizar}
+                isLoading={previewing}
+                disabled={generando || previewing}
+                variant="outline"
+                className="h-11 shadow-sm transition-all bg-white hover:bg-slate-100"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                Vista previa
+              </Button>
+            </div>
           </div>
 
           {/* Mensaje de error */}
           {error && (
-            <div className="mt-4 flex items-start gap-3 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">
+            <div className="mt-4 flex items-start gap-3 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm shadow-sm animate-in slide-in-from-top-2">
               <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
           {/* Periodo seleccionado */}
-          <p className="mt-3 text-xs text-[color:var(--text-secondary)]">
-            Periodo seleccionado: <span className="font-semibold capitalize">{formatMes(mesAnio)}</span>
-            {' · '}Costo total de operación acumulado:
-            <span className="font-semibold"> S/. {totalCosto.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-          </p>
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-indigo-50 rounded-lg border border-indigo-100 text-sm">
+            <p className="text-indigo-900">
+              Periodo seleccionado: <span className="font-bold capitalize">{formatMes(mesAnio)}</span>
+            </p>
+            <p className="text-indigo-900 mt-2 sm:mt-0">
+              Costo total operación:
+              <span className="font-bold ml-1 text-lg"> S/. {totalCosto.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+            </p>
+          </div>
         </CardContent>
       </Card>
 

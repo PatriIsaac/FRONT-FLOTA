@@ -69,7 +69,7 @@ export default function TallerForm({ isOpen, onClose, taller }: Props) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={taller ? 'Editar Taller' : 'Nuevo Taller'}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col" style={{ gap: '24px' }}>
         <Input
           label="Razón Social"
           placeholder="Ej: Automotriz del Centro"
@@ -99,7 +99,7 @@ export default function TallerForm({ isOpen, onClose, taller }: Props) {
         />
 
         <div className="flex justify-end gap-4 pt-4">
-          <Button variant="ghost" type="button" onClick={onClose}>Cancelar</Button>
+          <Button variant="outline" type="button" onClick={onClose}>Cancelar</Button>
           <Button type="submit" isLoading={mutation.isPending}>
             {taller ? 'Actualizar' : 'Guardar'}
           </Button>

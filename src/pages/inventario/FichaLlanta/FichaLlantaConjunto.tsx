@@ -30,7 +30,10 @@ export default function FichaLlantaConjunto() {
   // Mutaciones Llantas
   const createLlanta = useMutation({
     mutationFn: inventarioService.createLlanta,
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['llantas'] }); alerts.success('Llanta registrada'); resetLlanta(); }
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['llantas'] }); alerts.success('Llanta registrada'); resetLlanta(); },
+    onError: (err: any) => {
+      alerts.error(err.response?.data?.error || err.message || 'Error al guardar llanta');
+    }
   });
   const deleteLlanta = useMutation({
     mutationFn: inventarioService.deleteLlanta,
@@ -40,7 +43,10 @@ export default function FichaLlantaConjunto() {
   // Mutaciones Conjuntos
   const createConjunto = useMutation({
     mutationFn: inventarioService.createConjunto,
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['conjuntos'] }); alerts.success('Conjunto registrado'); resetConjunto(); }
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['conjuntos'] }); alerts.success('Conjunto registrado'); resetConjunto(); },
+    onError: (err: any) => {
+      alerts.error(err.response?.data?.error || err.message || 'Error al guardar conjunto');
+    }
   });
   const deleteConjunto = useMutation({
     mutationFn: inventarioService.deleteConjunto,
@@ -77,7 +83,7 @@ export default function FichaLlantaConjunto() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="flex flex-col gap-6 animate-in fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Ficha Técnica de Componentes Mayores</h1>
@@ -111,7 +117,7 @@ export default function FichaLlantaConjunto() {
             </h3>
             
             {activeTab === 'llantas' ? (
-              <form onSubmit={handleLlanta(onLlantaSubmit)} className="space-y-4">
+              <form onSubmit={handleLlanta(onLlantaSubmit)} className="flex flex-col gap-6">
                 <Input label="Código Único" placeholder="LL-001" {...regLlanta('codigo', {required:true})} />
                 <Select label="Vehículo Instalado" {...regLlanta('vehiculoId')} options={[{value:0,label:'En Almacén / No Instalada'}, ...vehiculos.map((v:any)=>({value:v.vehiculoId, label:v.placa}))]} />
                 <Input label="Dimensión / Diseño" placeholder="295/80 R22.5" {...regLlanta('dimension', {required:true})} />
@@ -128,7 +134,7 @@ export default function FichaLlantaConjunto() {
                 </Button>
               </form>
             ) : (
-              <form onSubmit={handleConj(onConjuntoSubmit)} className="space-y-4">
+              <form onSubmit={handleConj(onConjuntoSubmit)} className="flex flex-col gap-6">
                 <Input label="Código Único / Serie" placeholder="M-12345" {...regConj('codigo', {required:true})} />
                 <Select label="Tipo de Conjunto" {...regConj('tipo')} options={[{value:'MOTOR',label:'Motor Completo'},{value:'CAJA_CAMBIOS',label:'Caja de Cambios'},{value:'CORONA',label:'Diferencial / Corona'}]} />
                 <Select label="Vehículo Instalado" {...regConj('vehiculoId')} options={[{value:0,label:'En Almacén'}, ...vehiculos.map((v:any)=>({value:v.vehiculoId, label:v.placa}))]} />
@@ -145,7 +151,7 @@ export default function FichaLlantaConjunto() {
 
         <div className="lg:col-span-2">
           <Card className="h-full">
-            <CardContent className="p-0">
+            <CardContent>
               {activeTab === 'llantas' ? (
                 <DataTable columns={columnsLlantas} data={llantas} isLoading={loadingLlantas} emptyMessage="No hay llantas registradas." />
               ) : (
