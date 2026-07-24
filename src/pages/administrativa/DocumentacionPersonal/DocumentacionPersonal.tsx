@@ -5,7 +5,6 @@ import { conductorService } from '../../../services/conductor.service';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { DataTable } from '../../../components/ui/DataTable';
 import { Button } from '../../../components/ui/Button';
-import { api } from '../../../services/api';
 import { alerts } from '../../../utils/alerts';
 
 export default function DocumentacionPersonal() {

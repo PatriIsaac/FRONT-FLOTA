@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Activity, Save, Trash2, PieChart } from 'lucide-react';
+import { Save, Trash2, PieChart } from 'lucide-react';
 import { indicadorService } from '../../../services/indicador.service';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
 import { DataTable } from '../../../components/ui/DataTable';
@@ -30,7 +29,7 @@ export default function GeneradorIndicadores() {
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<IndicadorFormData>({
-    resolver: zodResolver(indicadorSchema),
+    resolver: zodResolver(indicadorSchema) as any,
     defaultValues: {
       valor: 0,
       periodo: `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`

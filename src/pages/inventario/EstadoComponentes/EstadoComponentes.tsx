@@ -4,7 +4,6 @@ import { Search, Disc, Settings, AlertTriangle } from 'lucide-react';
 import { inventarioService } from '../../../services/inventario.service';
 import { vehiculoService } from '../../../services/vehiculo.service';
 import { Card, CardContent } from '../../../components/ui/Card';
-import { Select } from '../../../components/ui/Select';
 import { Button } from '../../../components/ui/Button';
 
 export default function EstadoComponentes() {
@@ -12,12 +11,12 @@ export default function EstadoComponentes() {
 
   const { data: vehiculos = [] } = useQuery({ queryKey: ['vehiculos'], queryFn: vehiculoService.getAll });
   
-  const { data: llantas = [], isLoading: loadingLlantas } = useQuery({ 
+  const { data: llantas = [] } = useQuery({
     queryKey: ['llantas'], 
     queryFn: inventarioService.getAllLlantas 
   });
   
-  const { data: conjuntos = [], isLoading: loadingConjuntos } = useQuery({ 
+  const { data: conjuntos = [] } = useQuery({
     queryKey: ['conjuntos'], 
     queryFn: inventarioService.getAllConjuntos 
   });

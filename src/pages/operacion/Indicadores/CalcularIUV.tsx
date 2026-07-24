@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Calculator, Calendar, BarChart2 } from 'lucide-react';
 import { vehiculoService } from '../../../services/vehiculo.service';
-import type { Vehiculo } from '../../../types/vehiculo';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { DataTable } from '../../../components/ui/DataTable';
 import { Input } from '../../../components/ui/Input';

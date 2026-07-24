@@ -29,7 +29,7 @@ export default function AutorizacionServicio() {
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<AutorizacionFormData>({
-    resolver: zodResolver(autorizacionSchema),
+    resolver: zodResolver(autorizacionSchema) as any,
     defaultValues: {
       presupuestoAproximado: 0
     }

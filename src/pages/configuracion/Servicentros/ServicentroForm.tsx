@@ -29,7 +29,7 @@ export default function ServicentroForm({ isOpen, onClose, servicentro }: Props)
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ServicentroFormData>({
-    resolver: zodResolver(servicentroSchema),
+    resolver: zodResolver(servicentroSchema) as any,
   });
 
   useEffect(() => {

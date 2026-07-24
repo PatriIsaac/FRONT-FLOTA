@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -39,7 +38,7 @@ export default function CostoVariable() {
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CostoVariableFormData>({
-    resolver: zodResolver(costoVariableSchema),
+    resolver: zodResolver(costoVariableSchema) as any,
     defaultValues: {
       kmHoras: 0,
       cvv: 0,
@@ -72,13 +71,13 @@ export default function CostoVariable() {
   };
 
   const columns = [
-    { 
-      key: 'vehiculo', 
+    {
+      key: 'vehiculo',
       header: 'Vehículo',
-      render: (d: any) => d.vehiculo ? `${d.vehiculo.placa}` : `ID: ${d.vehiculoId}`
+      render: (d: any) => d.Vehiculo ? `${d.Vehiculo.placa}` : `ID: ${d.vehiculoId}`
     },
     { key: 'mesAnio', header: 'Periodo' },
-    { key: 'kmHoras', header: 'Km / Horas' },
+    { key: 'km', header: 'Km / Horas', render: (d: any) => d.km ?? '—' },
     { key: 'cvv', header: 'CVV (S/.)', render: (d: any) => `S/. ${d.cvv}` },
     { key: 'ckv', header: 'CKV (S/./Km)', render: (d: any) => `S/. ${d.ckv}` },
     { key: 'consumo', header: 'Consumo (gal)' },

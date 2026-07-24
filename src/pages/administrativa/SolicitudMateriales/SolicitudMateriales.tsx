@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
@@ -39,8 +39,8 @@ export default function SolicitudMateriales() {
     queryFn: administrativaService.getMateriales
   });
 
-  const { register, control, handleSubmit, reset, watch, formState: { errors } } = useForm<SolicitudFormData>({
-    resolver: zodResolver(solicitudSchema),
+  const { register, control, handleSubmit, reset, formState: { errors } } = useForm<SolicitudFormData>({
+    resolver: zodResolver(solicitudSchema) as any,
     defaultValues: {
       detalles: [{ materialId: 0, cantidad: 1 }]
     }
@@ -99,7 +99,7 @@ export default function SolicitudMateriales() {
                 error={errors.ordenId?.message}
                 options={[
                   { value: 0, label: 'Seleccione una orden...' },
-                  ...ordenes.map((o: any) => ({ value: o.ordenId, label: `Orden N° ${o.numero} - Vehículo: ${o.vehiculo?.placa || ''}` }))
+                  ...ordenes.map((o: any) => ({ value: o.ordenId, label: `Orden N° ${o.numero} - Vehículo: ${(o.Vehiculo ?? o.vehiculo)?.placa || ''}` }))
                 ]}
               />
 

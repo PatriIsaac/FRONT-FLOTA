@@ -1,5 +1,4 @@
-import { createContext, useState, useEffect, ReactNode } from 'react';
-import { api } from '../services/api';
+import { createContext, useState, type ReactNode } from 'react';
 
 export interface User {
   id: string;
@@ -21,20 +20,21 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
+  // La sesión se restaura de forma síncrona en el primer render para que las rutas
+  // protegidas no redirijan a login al refrescar la página o entrar por un enlace directo.
+  const [user, setUser] = useState<User | null>(() => {
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
-    
     if (token && storedUser) {
       try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        logout();
+        return JSON.parse(storedUser);
+      } catch {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
       }
     }
-  }, []);
+    return null;
+  });
 
   const login = (token: string, userData: User) => {
     localStorage.setItem('token', token);

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Calculator, BatteryWarning } from 'lucide-react';
 import { vehiculoService } from '../../../services/vehiculo.service';

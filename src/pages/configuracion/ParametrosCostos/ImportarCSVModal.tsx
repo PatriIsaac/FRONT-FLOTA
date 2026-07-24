@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Papa from 'papaparse';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { Upload, FileText, CheckCircle2, AlertCircle, XCircle } from 'lucide-react';
 import { Modal } from '../../../components/ui/Modal';
 import { Button } from '../../../components/ui/Button';
@@ -69,7 +69,7 @@ export default function ImportarCSVModal({ isOpen, onClose }: Props) {
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
-        const rows = results.data.map((row, index) => {
+        const rows = results.data.map((row) => {
           const placa = (row.Placa || '').trim().toUpperCase();
           const mesAnio = (row.MesAnio || '').trim();
           const cfp = parseFloat(String(row.CFP));

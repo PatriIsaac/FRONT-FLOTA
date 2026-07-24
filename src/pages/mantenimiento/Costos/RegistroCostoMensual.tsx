@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -36,7 +35,7 @@ export default function RegistroCostoMensual() {
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<RegistroFormData>({
-    resolver: zodResolver(registroSchema),
+    resolver: zodResolver(registroSchema) as any,
     defaultValues: {
       propio: 0,
       terceros: 0,
@@ -69,7 +68,7 @@ export default function RegistroCostoMensual() {
     { 
       key: 'vehiculo', 
       header: 'Vehículo',
-      render: (d: any) => d.vehiculo ? `${d.vehiculo.placa} (${d.vehiculo.codigoPatrimonio})` : `ID: ${d.vehiculoId}`
+      render: (d: any) => (d.Vehiculo ?? d.vehiculo) ? `${(d.Vehiculo ?? d.vehiculo).placa} (${(d.Vehiculo ?? d.vehiculo).codigoPatrimonio})` : `ID: ${d.vehiculoId}`
     },
     { key: 'mesAnio', header: 'Periodo' },
     { key: 'propio', header: 'Costo Propio (S/.)', render: (d: any) => `S/. ${d.propio}` },

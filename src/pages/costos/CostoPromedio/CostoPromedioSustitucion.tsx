@@ -49,7 +49,7 @@ export default function CostoPromedioSustitucion() {
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CostoPromedioFormData>({
-    resolver: zodResolver(costoPromedioSchema),
+    resolver: zodResolver(costoPromedioSchema) as any,
     defaultValues: {
       eniaN: 1,
       depreciacion: 0,
@@ -75,7 +75,7 @@ export default function CostoPromedioSustitucion() {
     { 
       key: 'vehiculo', 
       header: 'Vehículo',
-      render: (d: any) => d.vehiculo ? `${d.vehiculo.placa} (Vida útil: ${d.vehiculo.vidaUtilAnios} años)` : `ID: ${d.vehiculoId}`
+      render: (d: any) => (d.Vehiculo ?? d.vehiculo) ? `${(d.Vehiculo ?? d.vehiculo).placa} (Vida útil: ${(d.Vehiculo ?? d.vehiculo).vidaUtilAnios} años)` : `ID: ${d.vehiculoId}`
     },
     { key: 'eniaN', header: 'Año Evaluado (N)' },
     { key: 'depreciacion', header: 'Depreciación (S/.)', render: (d: any) => `S/. ${d.depreciacion}` },
@@ -89,7 +89,7 @@ export default function CostoPromedioSustitucion() {
       key: 'estado',
       header: 'Evaluación',
       render: (d: any) => {
-        const esOptimo = d.eniaN >= (d.vehiculo?.vidaUtilAnios || 5);
+        const esOptimo = d.eniaN >= ((d.Vehiculo ?? d.vehiculo)?.vidaUtilAnios || 5);
         return esOptimo ? (
           <span className="text-red-600 font-bold flex items-center"><AlertTriangle className="w-4 h-4 mr-1" /> Sustituir</span>
         ) : (

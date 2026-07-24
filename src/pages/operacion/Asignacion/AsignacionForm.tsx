@@ -38,7 +38,7 @@ export default function AsignacionForm({ isOpen, onClose, asignacion }: Props) {
   const { data: conductores = [] } = useQuery({ queryKey: ['conductores'], queryFn: conductorService.getAll });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<AsignacionFormData>({
-    resolver: zodResolver(asignacionSchema),
+    resolver: zodResolver(asignacionSchema) as any,
   });
 
   useEffect(() => {

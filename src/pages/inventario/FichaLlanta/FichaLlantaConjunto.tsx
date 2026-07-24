@@ -54,8 +54,8 @@ export default function FichaLlantaConjunto() {
   });
 
   // Formularios
-  const { register: regLlanta, handleSubmit: handleLlanta, reset: resetLlanta, formState: { errors: errLlanta } } = useForm();
-  const { register: regConj, handleSubmit: handleConj, reset: resetConjunto, formState: { errors: errConj } } = useForm();
+  const { register: regLlanta, handleSubmit: handleLlanta, reset: resetLlanta } = useForm();
+  const { register: regConj, handleSubmit: handleConj, reset: resetConjunto } = useForm();
 
   const onLlantaSubmit = (data: any) => {
     createLlanta.mutate({ ...data, vehiculoId: Number(data.vehiculoId), costo: Number(data.costo) });
@@ -66,7 +66,7 @@ export default function FichaLlantaConjunto() {
 
   const columnsLlantas = [
     { key: 'codigo', header: 'Código Llanta' },
-    { key: 'vehiculo', header: 'Vehículo', render: (d: any) => d.vehiculo?.placa },
+    { key: 'vehiculo', header: 'Vehículo', render: (d: any) => (d.Vehiculo ?? d.vehiculo)?.placa ?? '—' },
     { key: 'posicion', header: 'Posición' },
     { key: 'dimension', header: 'Dimensión / Diseño' },
     { key: 'estado', header: 'Estado', render: (d: any) => <span className={`font-bold ${d.estado==='NUEVA'?'text-emerald-600':d.estado==='REENCAUCHADA'?'text-blue-600':'text-amber-600'}`}>{d.estado}</span> },
@@ -75,7 +75,7 @@ export default function FichaLlantaConjunto() {
 
   const columnsConjuntos = [
     { key: 'codigo', header: 'Código Conjunto' },
-    { key: 'vehiculo', header: 'Vehículo', render: (d: any) => d.vehiculo?.placa },
+    { key: 'vehiculo', header: 'Vehículo', render: (d: any) => (d.Vehiculo ?? d.vehiculo)?.placa ?? '—' },
     { key: 'tipo', header: 'Tipo (Motor/Caja)' },
     { key: 'estado', header: 'Estado', render: (d: any) => <span className="font-bold">{d.estado}</span> },
     { key: 'fechaInstalacion', header: 'Instalación', render: (d: any) => d.fechaInstalacion ? new Date(d.fechaInstalacion).toLocaleDateString() : '-' },

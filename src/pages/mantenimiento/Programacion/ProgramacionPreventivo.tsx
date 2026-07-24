@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Settings, Activity } from 'lucide-react';
 import { vehiculoService } from '../../../services/vehiculo.service';
@@ -30,9 +29,11 @@ export default function ProgramacionPreventivo() {
       kmActual = vehiculoMovimientos[0].kmLlegada;
     }
 
-    // Supongamos un parámetro de mantenimiento cada 5000 km
+    // Parámetro de mantenimiento cada 5000 km. El próximo hito es siempre el siguiente
+    // múltiplo del intervalo por encima del km actual, de modo que un vehículo sin
+    // kilometraje acumulado queda con el intervalo completo por recorrer (prioridad baja).
     const intervaloMtto = 5000;
-    const proximoMtto = Math.ceil(kmActual / intervaloMtto) * intervaloMtto;
+    const proximoMtto = (Math.floor(kmActual / intervaloMtto) + 1) * intervaloMtto;
     const kmRestantes = proximoMtto - kmActual;
     const urgencia = kmRestantes <= 500 ? 'ALTA' : kmRestantes <= 1500 ? 'MEDIA' : 'BAJA';
 
@@ -40,8 +41,8 @@ export default function ProgramacionPreventivo() {
       id: v.vehiculoId,
       vehiculo: v,
       kmActual,
-      proximoMtto: proximoMtto === 0 ? intervaloMtto : proximoMtto,
-      kmRestantes: kmRestantes === 0 ? intervaloMtto : kmRestantes,
+      proximoMtto,
+      kmRestantes,
       urgencia
     };
   });

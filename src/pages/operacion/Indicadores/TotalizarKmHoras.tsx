@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Calendar, BarChart2, Activity } from 'lucide-react';
 import { movimientoService } from '../../../services/movimiento.service';
-import type { MovimientoDiario } from '../../../types/movimiento';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { DataTable } from '../../../components/ui/DataTable';
 import { Input } from '../../../components/ui/Input';

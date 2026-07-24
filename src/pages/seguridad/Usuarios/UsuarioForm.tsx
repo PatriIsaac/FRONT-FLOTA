@@ -37,7 +37,7 @@ export default function UsuarioForm({ isOpen, onClose, usuario }: Props) {
   const { data: roles = [] } = useQuery({ queryKey: ['roles'], queryFn: usuarioService.getAllRoles });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<UsuarioFormData>({
-    resolver: zodResolver(usuarioSchema),
+    resolver: zodResolver(usuarioSchema) as any,
   });
 
   useEffect(() => {

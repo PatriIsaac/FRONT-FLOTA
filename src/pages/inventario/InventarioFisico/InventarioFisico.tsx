@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -37,7 +36,7 @@ export default function InventarioFisico() {
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<InventarioFormData>({
-    resolver: zodResolver(inventarioSchema),
+    resolver: zodResolver(inventarioSchema) as any,
     defaultValues: {
       fecha: new Date().toISOString().split('T')[0],
       kmHorasLectura: 0,
@@ -77,7 +76,7 @@ export default function InventarioFisico() {
 
   const columns = [
     { key: 'fecha', header: 'Fecha Auditoría', render: (d: any) => new Date(d.fecha).toLocaleDateString() },
-    { key: 'vehiculo', header: 'Vehículo', render: (d: any) => d.vehiculo ? `${d.vehiculo.placa}` : `ID: ${d.vehiculoId}` },
+    { key: 'vehiculo', header: 'Vehículo', render: (d: any) => (d.Vehiculo ?? d.vehiculo) ? `${(d.Vehiculo ?? d.vehiculo).placa}` : `ID: ${d.vehiculoId}` },
     { key: 'kmHorasLectura', header: 'Km / H. Lectura', render: (d: any) => d.kmHorasLectura.toLocaleString() },
     { 
       key: 'estadoGeneral', 

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { History, Wrench, Calendar } from 'lucide-react';
+import { History, Wrench } from 'lucide-react';
 import { vehiculoService } from '../../../services/vehiculo.service';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { DataTable } from '../../../components/ui/DataTable';

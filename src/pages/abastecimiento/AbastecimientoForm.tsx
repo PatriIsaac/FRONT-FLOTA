@@ -38,7 +38,7 @@ export default function AbastecimientoForm({ isOpen, onClose, abastecimiento }: 
   const { data: servicentros = [] } = useQuery({ queryKey: ['servicentros'], queryFn: servicentroService.getAll });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<AbastecimientoFormData>({
-    resolver: zodResolver(abastecimientoSchema),
+    resolver: zodResolver(abastecimientoSchema) as any,
   });
 
   useEffect(() => {

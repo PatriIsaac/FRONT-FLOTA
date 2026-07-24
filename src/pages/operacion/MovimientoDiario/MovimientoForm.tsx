@@ -40,7 +40,7 @@ export default function MovimientoForm({ isOpen, onClose, movimiento }: Props) {
   const { data: conductores = [] } = useQuery({ queryKey: ['conductores'], queryFn: conductorService.getAll });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<MovimientoFormData>({
-    resolver: zodResolver(movimientoSchema),
+    resolver: zodResolver(movimientoSchema) as any,
   });
 
   useEffect(() => {

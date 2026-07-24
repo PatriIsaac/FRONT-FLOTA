@@ -30,7 +30,7 @@ export default function EmitirOrden() {
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<OrdenFormData>({
-    resolver: zodResolver(ordenSchema),
+    resolver: zodResolver(ordenSchema) as any,
     defaultValues: {
       tipoCombustible: 'DIESEL',
       galonesAutorizados: 0

@@ -49,7 +49,7 @@ export default function ParametrosCostosList() {
     { 
       key: 'vehiculo', 
       header: 'Vehículo',
-      render: (c: CostoFijoMensual) => c.vehiculo ? `${c.vehiculo.placa} (${c.vehiculo.codigoPatrimonio})` : `ID: ${c.vehiculoId}`
+      render: (c: any) => (c.Vehiculo ?? c.vehiculo) ? `${(c.Vehiculo ?? c.vehiculo).placa} (${(c.Vehiculo ?? c.vehiculo).codigoPatrimonio})` : `ID: ${c.vehiculoId}`
     },
     { 
       key: 'cfp', 

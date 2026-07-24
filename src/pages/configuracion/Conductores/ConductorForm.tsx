@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal } from '../../../components/ui/Modal';
 import { Input } from '../../../components/ui/Input';
-import { Select } from '../../../components/ui/Select';
 import { Button } from '../../../components/ui/Button';
 import { conductorService } from '../../../services/conductor.service';
 import type { Conductor } from '../../../types/conductor';
@@ -29,7 +28,7 @@ export default function ConductorForm({ isOpen, onClose, conductor }: Props) {
   const queryClient = useQueryClient();
   
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ConductorFormData>({
-    resolver: zodResolver(conductorSchema),
+    resolver: zodResolver(conductorSchema) as any,
     defaultValues: {
       osActivo: true
     }

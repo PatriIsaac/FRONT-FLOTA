@@ -26,7 +26,7 @@ export default function AreaForm({ isOpen, onClose, area }: Props) {
   const queryClient = useQueryClient();
   
   const { register, handleSubmit, reset, formState: { errors } } = useForm<AreaFormData>({
-    resolver: zodResolver(areaSchema),
+    resolver: zodResolver(areaSchema) as any,
   });
 
   useEffect(() => {

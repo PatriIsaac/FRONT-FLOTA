@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -37,7 +37,7 @@ export default function ImportarCostosFijos() {
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CostoFijoFormData>({
-    resolver: zodResolver(costoFijoSchema),
+    resolver: zodResolver(costoFijoSchema) as any,
     defaultValues: {
       cfp: 0,
       cfv: 0,
@@ -90,7 +90,7 @@ export default function ImportarCostosFijos() {
     { 
       key: 'vehiculo', 
       header: 'Vehículo',
-      render: (d: any) => d.vehiculo ? `${d.vehiculo.placa}` : `ID: ${d.vehiculoId}`
+      render: (d: any) => (d.Vehiculo ?? d.vehiculo) ? `${(d.Vehiculo ?? d.vehiculo).placa}` : `ID: ${d.vehiculoId}`
     },
     { key: 'mesAnio', header: 'Periodo' },
     { key: 'cfp', header: 'Costo Fijo Personal (CFP)', render: (d: any) => `S/. ${d.cfp}` },

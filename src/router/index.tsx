@@ -1,7 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import Dashboard from '../pages/Dashboard';
-import GenericPage from '../pages/GenericPage';
 import Login from '../pages/auth/Login';
 
 import PrivateRoute from './PrivateRoute';
@@ -40,25 +39,6 @@ import DocumentacionPersonal from '../pages/administrativa/DocumentacionPersonal
 import InventarioFisico from '../pages/inventario/InventarioFisico/InventarioFisico';
 import FichaLlantaConjunto from '../pages/inventario/FichaLlanta/FichaLlantaConjunto';
 import EstadoComponentes from '../pages/inventario/EstadoComponentes/EstadoComponentes';
-// Helper to create a generic route element
-const page = (
-  title: string,
-  description: string,
-  section: string,
-  sectionColor: string,
-  sectionIcon: string,
-  code?: string
-) => (
-  <GenericPage
-    title={title}
-    code={code}
-    description={description}
-    section={section}
-    sectionColor={sectionColor}
-    sectionIcon={sectionIcon}
-  />
-);
-
 export const router = createBrowserRouter([
   {
     path: '/login',

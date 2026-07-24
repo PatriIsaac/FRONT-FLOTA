@@ -36,7 +36,7 @@ export default function VehiculoForm({ isOpen, onClose, vehiculo }: Props) {
   const { data: categorias = [] } = useQuery({ queryKey: ['categoriasVehiculo'], queryFn: categoriaVehiculoService.getAll });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<VehiculoFormData>({
-    resolver: zodResolver(vehiculoSchema),
+    resolver: zodResolver(vehiculoSchema) as any,
     defaultValues: {
       estado: 'Operativo',
       categoriaVehiculoId: 0,

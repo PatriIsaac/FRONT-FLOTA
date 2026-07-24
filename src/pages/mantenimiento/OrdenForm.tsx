@@ -39,7 +39,7 @@ export default function OrdenForm({ isOpen, onClose, orden }: Props) {
   const { data: talleres = [] } = useQuery({ queryKey: ['talleres'], queryFn: tallerService.getAll });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<OrdenFormData>({
-    resolver: zodResolver(ordenSchema),
+    resolver: zodResolver(ordenSchema) as any,
   });
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function OrdenForm({ isOpen, onClose, orden }: Props) {
 
   const mutation = useMutation({
     mutationFn: (data: OrdenFormData) =>
-      orden ? mantenimientoService.update(orden.ordenId, data) : mantenimientoService.create(data),
+      orden ? mantenimientoService.update(orden.ordenId, data as any) : mantenimientoService.create(data as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mantenimientos'] });
       alerts.success(orden ? 'Orden actualizada' : 'Orden registrada');

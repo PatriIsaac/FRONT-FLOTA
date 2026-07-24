@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Wrench, Plus, Trash2, Save } from 'lucide-react';
+import { Wrench, Trash2, Save } from 'lucide-react';
 import { mantenimientoDetalleService } from '../../../services/mantenimiento-avanzado.service';
 import { mantenimientoService } from '../../../services/mantenimiento.service';
 import { Card, CardContent } from '../../../components/ui/Card';
@@ -39,7 +38,7 @@ export default function RegistroManoObraRepuestos() {
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<DetalleFormData>({
-    resolver: zodResolver(detalleSchema),
+    resolver: zodResolver(detalleSchema) as any,
     defaultValues: {
       manoObra: 0,
       repuestos: 0,
@@ -120,7 +119,7 @@ export default function RegistroManoObraRepuestos() {
                 error={errors.ordenId?.message}
                 options={[
                   { value: 0, label: 'Seleccione orden...' },
-                  ...ordenes.map((o: any) => ({ value: o.ordenId, label: `${o.numero} - ${o.vehiculo?.placa || ''}` }))
+                  ...ordenes.map((o: any) => ({ value: o.ordenId, label: `${o.numero} - ${(o.Vehiculo ?? o.vehiculo)?.placa || ''}` }))
                 ]}
               />
 

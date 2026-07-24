@@ -36,7 +36,7 @@ export default function ParametroCostoForm({ isOpen, onClose, costo }: Props) {
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CostoFormData>({
-    resolver: zodResolver(costoSchema),
+    resolver: zodResolver(costoSchema) as any,
   });
 
   useEffect(() => {

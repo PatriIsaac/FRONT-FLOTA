@@ -29,7 +29,7 @@ export default function TallerForm({ isOpen, onClose, taller }: Props) {
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<TallerFormData>({
-    resolver: zodResolver(tallerSchema),
+    resolver: zodResolver(tallerSchema) as any,
   });
 
   useEffect(() => {
