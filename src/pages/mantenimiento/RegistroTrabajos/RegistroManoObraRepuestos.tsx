@@ -75,13 +75,13 @@ export default function RegistroManoObraRepuestos() {
       render: (d: any) => d.orden?.numero || `ID: ${d.ordenId}`
     },
     { key: 'origen', header: 'Origen (Propio/Terceros)' },
-    { key: 'manoObra', header: 'Mano de Obra (S/.)', render: (d: any) => `S/. ${d.manoObra}` },
-    { key: 'repuestos', header: 'Repuestos (S/.)', render: (d: any) => `S/. ${d.repuestos}` },
-    { key: 'otros', header: 'Otros (S/.)', render: (d: any) => `S/. ${d.otros}` },
+    { key: 'manoObra', header: 'Mano de Obra (US$)', render: (d: any) => `US$ ${d.manoObra}` },
+    { key: 'repuestos', header: 'Repuestos (US$)', render: (d: any) => `US$ ${d.repuestos}` },
+    { key: 'otros', header: 'Otros (US$)', render: (d: any) => `US$ ${d.otros}` },
     { 
       key: 'total', 
-      header: 'Total (S/.)',
-      render: (d: any) => <span className="font-bold">S/. {parseFloat(d.manoObra) + parseFloat(d.repuestos) + parseFloat(d.otros)}</span>
+      header: 'Total (US$)',
+      render: (d: any) => <span className="font-bold">US$ {parseFloat(d.manoObra) + parseFloat(d.repuestos) + parseFloat(d.otros)}</span>
     },
     {
       key: 'acciones',
@@ -134,21 +134,21 @@ export default function RegistroManoObraRepuestos() {
               />
 
               <Input 
-                label="Costo Mano de Obra (S/.)" 
+                label="Costo Mano de Obra (US$)" 
                 type="number" step="0.1"
                 {...register('manoObra')} 
                 error={errors.manoObra?.message} 
               />
               
               <Input 
-                label="Costo Repuestos e Insumos (S/.)" 
+                label="Costo Repuestos e Insumos (US$)" 
                 type="number" step="0.1"
                 {...register('repuestos')} 
                 error={errors.repuestos?.message} 
               />
               
               <Input 
-                label="Otros Costos (S/.)" 
+                label="Otros Costos (US$)" 
                 type="number" step="0.1"
                 {...register('otros')} 
                 error={errors.otros?.message} 

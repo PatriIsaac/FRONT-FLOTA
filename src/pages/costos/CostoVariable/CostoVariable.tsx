@@ -78,8 +78,8 @@ export default function CostoVariable() {
     },
     { key: 'mesAnio', header: 'Periodo' },
     { key: 'km', header: 'Km / Horas', render: (d: any) => d.km ?? '—' },
-    { key: 'cvv', header: 'CVV (S/.)', render: (d: any) => `S/. ${d.cvv}` },
-    { key: 'ckv', header: 'CKV (S/./Km)', render: (d: any) => `S/. ${d.ckv}` },
+    { key: 'cvv', header: 'CVV (US$)', render: (d: any) => `US$ ${d.cvv}` },
+    { key: 'ckv', header: 'CKV (US$/Km)', render: (d: any) => `US$ ${d.ckv}` },
     { key: 'consumo', header: 'Consumo (gal)' },
     { key: 'iuv', header: 'IUV (%)', render: (d: any) => `${d.iuv}%` },
     {
@@ -147,14 +147,14 @@ export default function CostoVariable() {
 
               <div className="grid grid-cols-2 gap-4">
                 <Input 
-                  label="CVV (S/.)" 
+                  label="CVV (US$)" 
                   type="number" step="0.01"
                   {...register('cvv')} 
                   error={errors.cvv?.message} 
                 />
                 
                 <Input 
-                  label="CKV (S/./Km)" 
+                  label="CKV (US$/Km)" 
                   type="number" step="0.01"
                   {...register('ckv')} 
                   error={errors.ckv?.message} 

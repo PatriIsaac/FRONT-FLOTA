@@ -117,7 +117,7 @@ export default function ReporteGestion() {
             <div>
               <p className="text-xs text-[color:var(--text-secondary)] uppercase font-bold">Costos Fijos</p>
               <p className="text-xl font-bold text-[color:var(--text-primary)]">
-                S/. {totalFijo.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                US$ {totalFijo.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </p>
             </div>
           </CardContent>
@@ -131,7 +131,7 @@ export default function ReporteGestion() {
             <div>
               <p className="text-xs text-[color:var(--text-secondary)] uppercase font-bold">Costos Variables</p>
               <p className="text-xl font-bold text-[color:var(--text-primary)]">
-                S/. {totalVar.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                US$ {totalVar.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </p>
             </div>
           </CardContent>
@@ -206,7 +206,7 @@ export default function ReporteGestion() {
             </p>
             <p className="text-indigo-900 mt-2 sm:mt-0">
               Costo total operación:
-              <span className="font-bold ml-1 text-lg"> S/. {totalCosto.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+              <span className="font-bold ml-1 text-lg"> US$ {totalCosto.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
             </p>
           </div>
         </CardContent>

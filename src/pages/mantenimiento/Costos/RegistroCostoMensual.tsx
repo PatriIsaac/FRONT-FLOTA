@@ -71,12 +71,12 @@ export default function RegistroCostoMensual() {
       render: (d: any) => (d.Vehiculo ?? d.vehiculo) ? `${(d.Vehiculo ?? d.vehiculo).placa} (${(d.Vehiculo ?? d.vehiculo).codigoPatrimonio})` : `ID: ${d.vehiculoId}`
     },
     { key: 'mesAnio', header: 'Periodo' },
-    { key: 'propio', header: 'Costo Propio (S/.)', render: (d: any) => `S/. ${d.propio}` },
-    { key: 'terceros', header: 'Costo Terceros (S/.)', render: (d: any) => `S/. ${d.terceros}` },
+    { key: 'propio', header: 'Costo Propio (US$)', render: (d: any) => `US$ ${d.propio}` },
+    { key: 'terceros', header: 'Costo Terceros (US$)', render: (d: any) => `US$ ${d.terceros}` },
     { 
       key: 'total', 
-      header: 'Total Mensual (S/.)',
-      render: (d: any) => <span className="font-bold text-gray-900">S/. {Number(d.propio || 0) + Number(d.terceros || 0)}</span>
+      header: 'Total Mensual (US$)',
+      render: (d: any) => <span className="font-bold text-gray-900">US$ {Number(d.propio || 0) + Number(d.terceros || 0)}</span>
     },
     {
       key: 'acciones',
@@ -126,14 +126,14 @@ export default function RegistroCostoMensual() {
               />
 
               <Input 
-                label="Costo Taller Propio (S/.)" 
+                label="Costo Taller Propio (US$)" 
                 type="number" step="0.1"
                 {...register('propio')} 
                 error={errors.propio?.message} 
               />
               
               <Input 
-                label="Costo Taller Terceros (S/.)" 
+                label="Costo Taller Terceros (US$)" 
                 type="number" step="0.1"
                 {...register('terceros')} 
                 error={errors.terceros?.message} 

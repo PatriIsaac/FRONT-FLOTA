@@ -54,12 +54,12 @@ export default function ParametrosCostosList() {
     { 
       key: 'cfp', 
       header: 'CFP',
-      render: (c: CostoFijoMensual) => `S/. ${Number(c.cfp).toFixed(2)}`
+      render: (c: CostoFijoMensual) => `US$ ${Number(c.cfp).toFixed(2)}`
     },
     { 
       key: 'cfv', 
       header: 'CFV',
-      render: (c: CostoFijoMensual) => `S/. ${Number(c.cfv).toFixed(2)}`
+      render: (c: CostoFijoMensual) => `US$ ${Number(c.cfv).toFixed(2)}`
     },
     {
       key: 'acciones',

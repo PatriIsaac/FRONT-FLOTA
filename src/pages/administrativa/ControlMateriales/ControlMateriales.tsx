@@ -102,7 +102,7 @@ export default function ControlMateriales() {
     { key: 'nombre', header: 'Descripción' },
     { key: 'categoria', header: 'Categoría', render: (d: any) => d.categoria || 'General' },
     { key: 'stockActual', header: 'Stock Actual', render: (d: any) => <span className="font-bold">{d.stockActual || 0} {d.unidad}</span> },
-    { key: 'costoUnitario', header: 'Costo Unit.', render: (d: any) => `S/. ${d.costoUnitario || '0.00'}` },
+    { key: 'costoUnitario', header: 'Costo Unit.', render: (d: any) => `US$ ${d.costoUnitario || '0.00'}` },
     {
       key: 'acciones',
       header: 'Acciones',

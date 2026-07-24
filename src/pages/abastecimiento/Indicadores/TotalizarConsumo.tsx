@@ -74,8 +74,8 @@ export default function TotalizarConsumo() {
     },
     { 
       key: 'totalCosto', 
-      header: 'Costo Total (S/.)',
-      render: (d: any) => <span className="font-bold text-gray-900">S/. {Number(d.totalCosto).toFixed(2)}</span>
+      header: 'Costo Total (US$)',
+      render: (d: any) => <span className="font-bold text-gray-900">US$ {Number(d.totalCosto).toFixed(2)}</span>
     }
   ];
 
@@ -113,7 +113,7 @@ export default function TotalizarConsumo() {
               <div className="pt-6 border-t border-gray-100 space-y-4">
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Gasto Total del Mes</p>
-                  <h2 className="text-3xl font-bold text-gray-900">S/. {totalCostoMes.toLocaleString(undefined, {minimumFractionDigits: 2})}</h2>
+                  <h2 className="text-3xl font-bold text-gray-900">US$ {totalCostoMes.toLocaleString(undefined, {minimumFractionDigits: 2})}</h2>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Total de Combustible</p>

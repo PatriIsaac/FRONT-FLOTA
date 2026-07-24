@@ -92,7 +92,7 @@ export default function AutorizacionServicio() {
               />
               
               <Input 
-                label="Presupuesto Aproximado (S/.)" 
+                label="Presupuesto Aproximado (US$)" 
                 type="number"
                 step="0.1"
                 {...register('presupuestoAproximado')} 
@@ -134,7 +134,7 @@ export default function AutorizacionServicio() {
                   </div>
                   <div className="border-t border-gray-100 pt-4">
                     <span className="text-gray-500 block text-xs uppercase">Monto Aprox. Aprobado</span>
-                    <strong className="text-gray-900">S/. {autorizacion.presupuestoAproximado}</strong>
+                    <strong className="text-gray-900">US$ {autorizacion.presupuestoAproximado}</strong>
                   </div>
                 </div>
 

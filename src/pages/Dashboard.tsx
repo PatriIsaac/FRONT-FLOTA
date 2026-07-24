@@ -142,8 +142,8 @@ export default function Dashboard() {
                       fontSize: 13,
                     }}
                   />
-                  <Bar dataKey="combustible" fill="#3b82f6" name="Combustible (S/)" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="mantenimiento" fill="#10b981" name="Mantenimiento (S/)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="combustible" fill="#3b82f6" name="Combustible (US$)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="mantenimiento" fill="#10b981" name="Mantenimiento (US$)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

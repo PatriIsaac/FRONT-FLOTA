@@ -128,7 +128,7 @@ export default function FichaLlantaConjunto() {
                   {value:'REPUESTO',label:'Llanta de Repuesto'},{value:'ALMACEN',label:'En Almacén'}
                 ]} />
                 <Select label="Estado Físico" {...regLlanta('estado')} options={[{value:'NUEVA',label:'Nueva'},{value:'REENCAUCHADA',label:'Reencauchada'},{value:'PARA_REENCAUCHE',label:'Para Reencauche'},{value:'DE_BAJA',label:'De Baja'}]} />
-                <Input label="Costo (S/.)" type="number" step="0.01" {...regLlanta('costo')} />
+                <Input label="Costo (US$)" type="number" step="0.01" {...regLlanta('costo')} />
                 <Button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-700" isLoading={createLlanta.isPending}>
                   <Save className="w-4 h-4 mr-2"/> Guardar Llanta
                 </Button>
@@ -140,7 +140,7 @@ export default function FichaLlantaConjunto() {
                 <Select label="Vehículo Instalado" {...regConj('vehiculoId')} options={[{value:0,label:'En Almacén'}, ...vehiculos.map((v:any)=>({value:v.vehiculoId, label:v.placa}))]} />
                 <Input label="Fecha Instalación" type="date" {...regConj('fechaInstalacion')} />
                 <Select label="Estado Físico" {...regConj('estado')} options={[{value:'NUEVO',label:'Nuevo (Estándar)'},{value:'REPARADO',label:'Reparado / Overhaul'},{value:'MANTENIMIENTO',label:'En Reparación'},{value:'DE_BAJA',label:'De Baja'}]} />
-                <Input label="Costo (S/.)" type="number" step="0.01" {...regConj('costo')} />
+                <Input label="Costo (US$)" type="number" step="0.01" {...regConj('costo')} />
                 <Button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-700" isLoading={createConjunto.isPending}>
                   <Save className="w-4 h-4 mr-2"/> Guardar Conjunto
                 </Button>

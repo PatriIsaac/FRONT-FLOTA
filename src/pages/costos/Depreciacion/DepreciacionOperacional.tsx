@@ -43,13 +43,13 @@ export default function DepreciacionOperacional() {
     },
     { 
       key: 'valorNuevo', 
-      header: 'Valor Nuevo (S/.)',
-      render: (d: any) => `S/. ${d.valorNuevo.toLocaleString()}`
+      header: 'Valor Nuevo (US$)',
+      render: (d: any) => `US$ ${d.valorNuevo.toLocaleString()}`
     },
     { 
       key: 'valorResidual', 
-      header: 'Valor Residual (S/.)',
-      render: (d: any) => `S/. ${d.valorResidual.toLocaleString()}`
+      header: 'Valor Residual (US$)',
+      render: (d: any) => `US$ ${d.valorResidual.toLocaleString()}`
     },
     { 
       key: 'vidaUtil', 
@@ -58,8 +58,8 @@ export default function DepreciacionOperacional() {
     },
     { 
       key: 'depreciacionMensual', 
-      header: 'Depreciación Mensual (S/.)',
-      render: (d: any) => <span className="font-bold text-red-600">S/. {d.depreciacionMensual.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+      header: 'Depreciación Mensual (US$)',
+      render: (d: any) => <span className="font-bold text-red-600">US$ {d.depreciacionMensual.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
     }
   ];
 

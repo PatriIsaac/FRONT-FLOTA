@@ -78,12 +78,12 @@ export default function CostoPromedioSustitucion() {
       render: (d: any) => (d.Vehiculo ?? d.vehiculo) ? `${(d.Vehiculo ?? d.vehiculo).placa} (Vida útil: ${(d.Vehiculo ?? d.vehiculo).vidaUtilAnios} años)` : `ID: ${d.vehiculoId}`
     },
     { key: 'eniaN', header: 'Año Evaluado (N)' },
-    { key: 'depreciacion', header: 'Depreciación (S/.)', render: (d: any) => `S/. ${d.depreciacion}` },
-    { key: 'remanenteAcumulado', header: 'Remanente Acum. (S/.)', render: (d: any) => `S/. ${d.remanenteAcumulado}` },
+    { key: 'depreciacion', header: 'Depreciación (US$)', render: (d: any) => `US$ ${d.depreciacion}` },
+    { key: 'remanenteAcumulado', header: 'Remanente Acum. (US$)', render: (d: any) => `US$ ${d.remanenteAcumulado}` },
     { 
       key: 'costoPromedioAnual', 
       header: 'Costo Prom. Anual (Cpa)', 
-      render: (d: any) => <span className="font-bold text-gray-900">S/. {d.costoPromedioAnual}</span> 
+      render: (d: any) => <span className="font-bold text-gray-900">US$ {d.costoPromedioAnual}</span> 
     },
     {
       key: 'estado',
@@ -136,8 +136,8 @@ export default function CostoPromedioSustitucion() {
                 <div className="flex items-center gap-2 text-red-600 font-bold">
                   <TrendingDown className="w-4 h-4" /> Año óptimo de sustitución: {analisis.anioOptimo}
                 </div>
-                <div className="text-gray-600">Depreciación anual: S/. {analisis.depreciacionAnual}</div>
-                <div className="text-gray-600">Mant. año base: S/. {analisis.mantenimientoAnioBase}</div>
+                <div className="text-gray-600">Depreciación anual: US$ {analisis.depreciacionAnual}</div>
+                <div className="text-gray-600">Mant. año base: US$ {analisis.mantenimientoAnioBase}</div>
                 <div className="text-gray-600">Factor crecimiento: {analisis.factorCrecimiento}</div>
               </div>
 
@@ -147,8 +147,8 @@ export default function CostoPromedioSustitucion() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="anio" label={{ value: 'Año de vida útil', position: 'insideBottom', offset: -2, fontSize: 12 }} tick={{ fontSize: 12 }} />
                     <YAxis tick={{ fontSize: 12 }} />
-                    <Tooltip formatter={(v: any) => `S/. ${Number(v).toFixed(2)}`} />
-                    <Line type="monotone" dataKey="costoPromedioAnual" stroke="#d97706" strokeWidth={2.5} name="Cpa (S/.)" dot={{ r: 3 }} />
+                    <Tooltip formatter={(v: any) => `US$ ${Number(v).toFixed(2)}`} />
+                    <Line type="monotone" dataKey="costoPromedioAnual" stroke="#d97706" strokeWidth={2.5} name="Cpa (US$)" dot={{ r: 3 }} />
                     {puntoOptimo && (
                       <ReferenceDot x={puntoOptimo.anio} y={puntoOptimo.costoPromedioAnual} r={6} fill="#ef4444" stroke="white" />
                     )}
@@ -183,21 +183,21 @@ export default function CostoPromedioSustitucion() {
               />
 
               <Input 
-                label="Depreciación (S/.)" 
+                label="Depreciación (US$)" 
                 type="number" step="0.01"
                 {...register('depreciacion')} 
                 error={errors.depreciacion?.message} 
               />
               
               <Input 
-                label="Costo Remanente Acum. (S/.)" 
+                label="Costo Remanente Acum. (US$)" 
                 type="number" step="0.01"
                 {...register('remanenteAcumulado')} 
                 error={errors.remanenteAcumulado?.message} 
               />
               
               <Input 
-                label="Costo Promedio Anual Resultante (S/.)" 
+                label="Costo Promedio Anual Resultante (US$)" 
                 type="number" step="0.01"
                 {...register('costoPromedioAnual')} 
                 error={errors.costoPromedioAnual?.message} 

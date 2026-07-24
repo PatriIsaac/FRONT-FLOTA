@@ -93,12 +93,12 @@ export default function ImportarCostosFijos() {
       render: (d: any) => (d.Vehiculo ?? d.vehiculo) ? `${(d.Vehiculo ?? d.vehiculo).placa}` : `ID: ${d.vehiculoId}`
     },
     { key: 'mesAnio', header: 'Periodo' },
-    { key: 'cfp', header: 'Costo Fijo Personal (CFP)', render: (d: any) => `S/. ${d.cfp}` },
-    { key: 'cfv', header: 'Costo Fijo Vehículo (CFV)', render: (d: any) => `S/. ${d.cfv}` },
+    { key: 'cfp', header: 'Costo Fijo Personal (CFP)', render: (d: any) => `US$ ${d.cfp}` },
+    { key: 'cfv', header: 'Costo Fijo Vehículo (CFV)', render: (d: any) => `US$ ${d.cfv}` },
     { 
       key: 'total', 
       header: 'Total CF Mensual', 
-      render: (d: any) => <span className="font-bold text-gray-900">S/. {parseFloat(d.cfp) + parseFloat(d.cfv)}</span> 
+      render: (d: any) => <span className="font-bold text-gray-900">US$ {parseFloat(d.cfp) + parseFloat(d.cfv)}</span> 
     },
     {
       key: 'acciones',
@@ -150,14 +150,14 @@ export default function ImportarCostosFijos() {
               />
               
               <Input 
-                label="CFP (S/.)" 
+                label="CFP (US$)" 
                 type="number" step="0.01"
                 {...register('cfp')} 
                 error={errors.cfp?.message} 
               />
 
               <Input 
-                label="CFV (S/.)" 
+                label="CFV (US$)" 
                 type="number" step="0.01"
                 {...register('cfv')} 
                 error={errors.cfv?.message} 

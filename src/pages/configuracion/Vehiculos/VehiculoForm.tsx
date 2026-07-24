@@ -117,14 +117,14 @@ export default function VehiculoForm({ isOpen, onClose, vehiculo }: Props) {
 
         <div className="grid grid-cols-2 gap-4">
           <Input
-            label="Valor Nuevo (S/)"
+            label="Valor Nuevo (US$)"
             type="number"
             step="0.01"
             {...register('valorNuevo')}
             error={errors.valorNuevo?.message}
           />
           <Input
-            label="Valor Residual (S/)"
+            label="Valor Residual (US$)"
             type="number"
             step="0.01"
             {...register('valorResidual')}
